@@ -11,7 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.market.trameo.features.home.HomeScreen
 import com.market.trameo.features.login.LoginScreen
+import com.market.trameo.features.register.RegisterScreen
 import com.market.trameo.ui.theme.TrameoTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,7 +21,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            LoginScreen(onLoginClick = { _, _ -> }, onRegisterClick = {})
+            RegisterScreen(onRegisterSuccess = {})
         }
     }
 }
