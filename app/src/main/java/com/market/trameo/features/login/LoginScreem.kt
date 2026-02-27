@@ -1,6 +1,7 @@
 package com.market.trameo.features.login
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -16,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -27,6 +29,7 @@ import kotlinx.coroutines.delay
 fun LoginScreen(
     onLoginSuccess: () -> Unit,
     onRegisterClick: () -> Unit,
+    onForgotPasswordClick: () -> Unit = {},
     viewModel: LoginViewModel = viewModel()
 ) {
     // Estado para gestionar los snackbars
@@ -147,8 +150,23 @@ fun LoginScreen(
                 enabled = !isLoading
             )
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
+            Text(
+                text = "¿Olvidaste tu contraseña?",
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .clickable(enabled = !isLoading) {
+                        onForgotPasswordClick()
+                    }
+                    .padding(8.dp),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.primary,
+                textDecoration = TextDecoration.Underline
+            )
+
+
+            Spacer(modifier = Modifier.height(10.dp))
             // Fila con los dos botones
             Row(
                 modifier = Modifier.fillMaxWidth(),
