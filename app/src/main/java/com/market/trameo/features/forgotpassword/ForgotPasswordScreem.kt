@@ -11,7 +11,6 @@ import androidx.compose.runtime.*
 import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -20,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.market.trameo.core.utils.RequestResult
+import com.market.trameo.ui.theme.TrameoTheme
 
 @Composable
 fun ForgotPassWordScreem(
@@ -57,7 +57,7 @@ snackbarHost = {
         val isError = recoveryResult is RequestResult.Failure
         Snackbar(
             containerColor = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-            contentColor = Color.White
+            contentColor = MaterialTheme.colorScheme.onPrimary
         ) {
             Text(data.visuals.message)
         }
@@ -79,7 +79,7 @@ snackbarHost = {
             text = "Recuperar contraseña",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.Black,
+            color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
@@ -91,7 +91,7 @@ snackbarHost = {
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White)
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
             Column(
                 modifier = Modifier
@@ -102,7 +102,7 @@ snackbarHost = {
                 Text(
                     text = "Introduce tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.",
                     fontSize = 16.sp,
-                    color = Color.Gray,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     lineHeight = 22.sp
                 )
 
@@ -132,7 +132,7 @@ snackbarHost = {
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = Color.Gray
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline
                     )
                 )
 
@@ -147,7 +147,7 @@ snackbarHost = {
                         .padding(bottom = 8.dp),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondary
+                        containerColor = MaterialTheme.colorScheme.tertiary
                     )
                 ) {
                     Icon(
@@ -167,7 +167,7 @@ snackbarHost = {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ForgotPassWordScreemPreview() {
-    MaterialTheme {
+    TrameoTheme {
         ForgotPassWordScreem()
     }
 }

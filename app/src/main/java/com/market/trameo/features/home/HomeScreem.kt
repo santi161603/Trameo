@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.market.trameo.R
+import com.market.trameo.ui.theme.TrameoTheme
 
 @Composable
 fun HomeScreen(
@@ -80,5 +81,7 @@ fun HomeScreen(
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen(onLoginClick = {}, onRegisterClick = {})
+    TrameoTheme {
+        HomeScreen(onLoginClick = {}, onRegisterClick = {})
+    }
 }

@@ -11,7 +11,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -23,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.market.trameo.R
 import com.market.trameo.core.utils.RequestResult
+import com.market.trameo.ui.theme.TrameoTheme
 import kotlinx.coroutines.delay
 
 @Composable
@@ -77,7 +77,7 @@ fun LoginScreen(
                         MaterialTheme.colorScheme.error
                     else
                         MaterialTheme.colorScheme.primary,
-                    contentColor = Color.White
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
                     Text(data.visuals.message)
                 }
@@ -193,7 +193,7 @@ fun LoginScreen(
                 }
 
                 // Botón de registro
-                Button(
+                OutlinedButton(
                     onClick = onRegisterClick,
                     modifier = Modifier
                         .weight(1f)
@@ -211,8 +211,10 @@ fun LoginScreen(
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen(
-        onLoginSuccess = {},
-        onRegisterClick = {}
-    )
+    TrameoTheme {
+        LoginScreen(
+            onLoginSuccess = {},
+            onRegisterClick = {}
+        )
+    }
 }

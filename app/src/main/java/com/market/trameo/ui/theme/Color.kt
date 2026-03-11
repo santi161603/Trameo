@@ -2,10 +2,23 @@ package com.market.trameo.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// Paleta principal Trameo
+val Terracota = Color(0xFFD9562A)
+val TerracotaLight = Color(0xFFE8805E)
+val TerracotaDark = Color(0xFFB8431E)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+val OcreSuave = Color(0xFFE8A15A)
+val OcreSuaveLight = Color(0xFFF0BF8A)
+val OcreSuaveDark = Color(0xFFD08B3E)
+
+val VerdeOliva = Color(0xFF6B8A4A)
+val VerdeOlivaLight = Color(0xFF8DAE6E)
+val VerdeOlivaDark = Color(0xFF506B36)
+
+val GrisPizarra = Color(0xFF2F3A3A)
+val GrisPizarraLight = Color(0xFF4A5858)
+val GrisPizarraDark = Color(0xFF1A2222)
+
+val Marfil = Color(0xFFF6F4EE)
+val MarfilDark = Color(0xFF2F3A3A)
+val MarfilVariant = Color(0xFFEDE9DF)
