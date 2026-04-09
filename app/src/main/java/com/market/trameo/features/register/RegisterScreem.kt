@@ -22,7 +22,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.market.trameo.core.utils.RequestResult
 import com.market.trameo.ui.theme.TrameoTheme
 import kotlinx.coroutines.delay
@@ -33,7 +33,7 @@ import java.util.*
 @Composable
 fun RegisterScreen(
     onRegisterSuccess: () -> Unit,
-    viewModel: RegisterViewModel = viewModel()
+    viewModel: RegisterViewModel = hiltViewModel()
 ) {
     // Estado para gestionar los snackbars
     val snackbarHostState = remember { SnackbarHostState() }

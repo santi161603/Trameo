@@ -5,15 +5,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.market.trameo.features.forgotpassword.ForgotPassWordScreem
-import com.market.trameo.features.home.HomeScreen
 import com.market.trameo.features.login.LoginScreen
 import com.market.trameo.features.register.RegisterScreen
+import com.market.trameo.features.splash.SplashScreen
 
 /**
  * Rutas de navegación de la app Trameo.
  */
 object Routes {
-    const val HOME = "home"
+    const val SPLASH = "splash"
     const val LOGIN = "login"
     const val REGISTER = "register"
     const val FORGOT_PASSWORD = "forgot_password"
@@ -23,10 +23,10 @@ object Routes {
  * Grafo de navegación principal.
  *
  * Flujo:
- *  Home  ──► Login  ──► ForgotPassword
- *        ──► Register
- *  Login ──► Regresar (vuelve a Home)
- *  Login ──► ¿Olvidaste tu contraseña? (va a ForgotPassword)
+ *  Splash ──► Login
+ *  Login  ──► Register
+ *         ──► ForgotPassword
+ *  Register ──► Login
  */
 @Composable
 fun TrameoNavGraph() {
@@ -34,16 +34,16 @@ fun TrameoNavGraph() {
 
     NavHost(
         navController = navController,
-        startDestination = Routes.HOME
+        startDestination = Routes.SPLASH
     ) {
-        // ── Pantalla Home (inicio) ──────────────────────────
-        composable(Routes.HOME) {
-            HomeScreen(
-                onLoginClick = {
-                    navController.navigate(Routes.LOGIN)
-                },
-                onRegisterClick = {
-                    navController.navigate(Routes.REGISTER)
+        // ── Pantalla Splash ─────────────────────────────────
+        composable(Routes.SPLASH) {
+            SplashScreen(
+                onFinish = {
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(Routes.SPLASH) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -52,14 +52,10 @@ fun TrameoNavGraph() {
         composable(Routes.LOGIN) {
             LoginScreen(
                 onLoginSuccess = {
-                    // Después de login exitoso, ir a Home limpiando el back-stack
-                    navController.navigate(Routes.HOME) {
-                        popUpTo(Routes.HOME) { inclusive = true }
-                    }
+                    // Login es la pantalla raíz actual. Se deja el flujo autenticado para futura pantalla.
                 },
                 onRegisterClick = {
-                    // Botón "Regresar" → vuelve a Home
-                    navController.popBackStack()
+                    navController.navigate(Routes.REGISTER)
                 },
                 onForgotPasswordClick = {
                     navController.navigate(Routes.FORGOT_PASSWORD)
@@ -71,9 +67,9 @@ fun TrameoNavGraph() {
         composable(Routes.REGISTER) {
             RegisterScreen(
                 onRegisterSuccess = {
-                    // Después de registro exitoso, volver a Home
-                    navController.navigate(Routes.HOME) {
-                        popUpTo(Routes.HOME) { inclusive = true }
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(Routes.LOGIN) { inclusive = true }
+                        launchSingleTop = true
                     }
                 }
             )

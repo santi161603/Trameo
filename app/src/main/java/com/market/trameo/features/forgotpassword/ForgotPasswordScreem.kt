@@ -17,14 +17,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.market.trameo.core.utils.RequestResult
 import com.market.trameo.ui.theme.TrameoTheme
 
 @Composable
 fun ForgotPassWordScreem(
     onNavigateBack: () -> Unit = {},
-    viewModel: ForgotPasswordViewModel = viewModel()
+    viewModel: ForgotPasswordViewModel = hiltViewModel()
 ){// Estado para gestionar los snackbars
 val snackbarHostState = remember { SnackbarHostState() }
 // Observar el estado de recoveryResult

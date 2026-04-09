@@ -7,8 +7,11 @@ import com.market.trameo.core.utils.ValidatedField
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class ForgotPasswordViewModel : ViewModel(){
+@HiltViewModel
+class ForgotPasswordViewModel @Inject constructor() : ViewModel(){
 
     // Campo de email con validación usando ValidatedField
     val email = ValidatedField("") { value ->
