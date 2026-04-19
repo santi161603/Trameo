@@ -49,4 +49,6 @@ object HomeObjectsData {
             imageUrl = "https://picsum.photos/seed/trameo-books/800/500"
         )
     )
+
+    fun findById(id: Int): HomeObjectItem? = objects.firstOrNull { it.id == id }
 }

@@ -1,4 +1,4 @@
-package com.market.trameo.features.intercambios
+package com.market.trameo.features.misobjetos
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -47,43 +47,25 @@ import com.market.trameo.ui.theme.Marfil
 import com.market.trameo.ui.theme.MarfilVariant
 import com.market.trameo.ui.theme.Terracota
 
-data class IntercambioItem(
+private data class MiObjetoItem(
     val id: Int,
     val title: String,
-    val counterpart: String,
-    val status: String,
+    val estado: String,
+    val puntos: Int,
     val imageUrl: String
 )
 
 @Composable
-fun MisIntercambiosScreen(
+fun MisObjetosScreen(
     onHomeClick: () -> Unit,
+    onTruequesClick: () -> Unit,
     onPerfilClick: () -> Unit,
-    onMisObjetosClick: () -> Unit,
     onPublicarClick: () -> Unit = {}
 ) {
     val items = listOf(
-        IntercambioItem(
-            id = 1,
-            title = "Bicicleta por guitarra",
-            counterpart = "Con Laura M.",
-            status = "Pendiente",
-            imageUrl = "https://picsum.photos/seed/intercambio-1/700/420"
-        ),
-        IntercambioItem(
-            id = 2,
-            title = "Licuadora por cafetera",
-            counterpart = "Con Andres C.",
-            status = "Aceptado",
-            imageUrl = "https://picsum.photos/seed/intercambio-2/700/420"
-        ),
-        IntercambioItem(
-            id = 3,
-            title = "Libros por audifonos",
-            counterpart = "Con Paula R.",
-            status = "En revision",
-            imageUrl = "https://picsum.photos/seed/intercambio-3/700/420"
-        )
+        MiObjetoItem(1, "Bicicleta urbana", "Publicado", 120, "https://picsum.photos/seed/objeto-1/700/420"),
+        MiObjetoItem(2, "Licuadora 2L", "En trueque", 80, "https://picsum.photos/seed/objeto-2/700/420"),
+        MiObjetoItem(3, "Guitarra acustica", "Pausado", 150, "https://picsum.photos/seed/objeto-3/700/420")
     )
 
     Scaffold(
@@ -96,11 +78,13 @@ fun MisIntercambiosScreen(
                     BottomNavItem(Routes.TRUEQUES, "Trueques", Icons.Default.Autorenew, "Trueques"),
                     BottomNavItem(Routes.PERFIL, "Perfil", Icons.Default.Person, "Perfil")
                 ),
-                currentRoute = Routes.TRUEQUES,
+                currentRoute = Routes.MIS_OBJETOS,
                 onItemClick = { item ->
-                    if (item.route == Routes.HOME) onHomeClick()
-                    if (item.route == Routes.PERFIL) onPerfilClick()
-                    if (item.route == Routes.MIS_OBJETOS) onMisObjetosClick()
+                    when (item.route) {
+                        Routes.HOME -> onHomeClick()
+                        Routes.TRUEQUES -> onTruequesClick()
+                        Routes.PERFIL -> onPerfilClick()
+                    }
                 },
                 onCenterClick = onPublicarClick,
                 centerIcon = Icons.Default.Add,
@@ -118,12 +102,12 @@ fun MisIntercambiosScreen(
         ) {
             item {
                 Text(
-                    text = "Mis intercambios",
+                    text = "Mis objetos",
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Gestiona tus solicitudes activas",
+                    text = "Administra tus publicaciones",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -131,14 +115,14 @@ fun MisIntercambiosScreen(
                 SearchFakeField()
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    StatusChip(text = "Todos", selected = true)
-                    StatusChip(text = "Pendientes", selected = false)
-                    StatusChip(text = "Aceptados", selected = false)
+                    EstadoChip("Todos", true)
+                    EstadoChip("Publicados", false)
+                    EstadoChip("En trueque", false)
                 }
             }
 
             items(items, key = { it.id }) { item ->
-                IntercambioCard(item = item)
+                MiObjetoCard(item)
             }
         }
     }
@@ -161,7 +145,7 @@ private fun SearchFakeField() {
             Icon(Icons.Outlined.Search, contentDescription = "Buscar")
             Spacer(modifier = Modifier.width(10.dp))
             Text(
-                text = "Buscar intercambio",
+                text = "Buscar mis objetos",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -170,7 +154,7 @@ private fun SearchFakeField() {
 }
 
 @Composable
-private fun StatusChip(text: String, selected: Boolean) {
+private fun EstadoChip(text: String, selected: Boolean) {
     Surface(
         shape = RoundedCornerShape(999.dp),
         color = if (selected) Terracota else MarfilVariant
@@ -185,10 +169,10 @@ private fun StatusChip(text: String, selected: Boolean) {
 }
 
 @Composable
-private fun IntercambioCard(item: IntercambioItem) {
-    val statusColor = when (item.status) {
-        "Aceptado" -> Color(0xFF3F8E4E)
-        "Pendiente" -> Color(0xFFD38A1F)
+private fun MiObjetoCard(item: MiObjetoItem) {
+    val statusColor = when (item.estado) {
+        "Publicado" -> Color(0xFF3F8E4E)
+        "En trueque" -> Color(0xFFD38A1F)
         else -> MaterialTheme.colorScheme.onSurfaceVariant
     }
 
@@ -228,13 +212,13 @@ private fun IntercambioCard(item: IntercambioItem) {
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = item.counterpart,
+                        text = "${item.puntos} pts",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 Text(
-                    text = item.status,
+                    text = item.estado,
                     color = statusColor,
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold
@@ -243,4 +227,3 @@ private fun IntercambioCard(item: IntercambioItem) {
         }
     }
 }
-

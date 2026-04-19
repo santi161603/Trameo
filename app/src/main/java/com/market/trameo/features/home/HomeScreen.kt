@@ -2,6 +2,7 @@ package com.market.trameo.features.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Autorenew
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.material.icons.filled.Person
@@ -60,7 +62,11 @@ import com.market.trameo.ui.theme.Terracota
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
-    onTruequesClick: () -> Unit = {}
+    onTruequesClick: () -> Unit = {},
+    onPerfilClick: () -> Unit = {},
+    onMisObjetosClick: () -> Unit = {},
+    onObjectClick: (Int) -> Unit = {},
+    onPublicarClick: () -> Unit = {}
 ) {
     val objects by viewModel.items.collectAsState()
 
@@ -76,7 +82,7 @@ fun HomeScreen(
                         contentDescription = "Home"
                     ),
                     BottomNavItem(
-                        route = "mis_objetos",
+                        route = Routes.MIS_OBJETOS,
                         title = "Mis objetos",
                         icon = Icons.AutoMirrored.Filled.List,
                         contentDescription = "Mis objetos"
@@ -88,7 +94,7 @@ fun HomeScreen(
                         contentDescription = "Trueques"
                     ),
                     BottomNavItem(
-                        route = "perfil",
+                        route = Routes.PERFIL,
                         title = "Perfil",
                         icon = Icons.Default.Person,
                         contentDescription = "Perfil"
@@ -99,16 +105,23 @@ fun HomeScreen(
                     if (item.route == Routes.TRUEQUES) {
                         onTruequesClick()
                     }
+                    if (item.route == Routes.PERFIL) {
+                        onPerfilClick()
+                    }
+                    if (item.route == Routes.MIS_OBJETOS) {
+                        onMisObjetosClick()
+                    }
                 },
-                onCenterClick = {},
-                centerIcon = Icons.AutoMirrored.Filled.List,
+                onCenterClick = onPublicarClick,
+                centerIcon = Icons.Default.Add,
                 centerContentDescription = "Publicar"
             )
         }
     ) { padding ->
         HomeContent(
             padding = padding,
-            items = objects
+            items = objects,
+            onObjectClick = onObjectClick
         )
     }
 }
@@ -116,7 +129,8 @@ fun HomeScreen(
 @Composable
 private fun HomeContent(
     padding: PaddingValues,
-    items: List<HomeObjectItem>
+    items: List<HomeObjectItem>,
+    onObjectClick: (Int) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -147,7 +161,7 @@ private fun HomeContent(
         }
 
         items(items, key = { it.id }) { item ->
-            HomeObjectCard(item)
+            HomeObjectCard(item) { onObjectClick(item.id) }
         }
     }
 }
@@ -275,9 +289,11 @@ private fun HomeBanner() {
 }
 
 @Composable
-private fun HomeObjectCard(item: HomeObjectItem) {
+private fun HomeObjectCard(item: HomeObjectItem, onClick: () -> Unit) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         shape = RoundedCornerShape(18.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
