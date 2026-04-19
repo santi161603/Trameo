@@ -1,4 +1,4 @@
-package com.market.trameo.ui.theme
+package com.trameo.core.theme
 
 import androidx.compose.ui.graphics.Color
 

@@ -1,11 +1,11 @@
-package com.market.trameo
+package com.trameo
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.market.trameo.core.navigation.TrameoNavGraph
-import com.market.trameo.ui.theme.TrameoTheme
+import com.trameo.core.navigation.TrameoNavGraph
+import com.trameo.core.theme.TrameoTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

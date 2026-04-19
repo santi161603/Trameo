@@ -1,4 +1,4 @@
-package com.market.trameo.ui.theme
+package com.trameo.core.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

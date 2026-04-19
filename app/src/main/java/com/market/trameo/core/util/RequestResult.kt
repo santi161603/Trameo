@@ -1,4 +1,4 @@
-package com.market.trameo.core.utils
+package com.trameo.core.util
 
 sealed class RequestResult {
     data class Success(val message: String) : RequestResult()

@@ -1,4 +1,4 @@
-package com.market.trameo.ui.theme
+package com.trameo.core.theme
 
 import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
