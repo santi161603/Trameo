@@ -1,4 +1,4 @@
-package com.trameo
+package com.market.trameo
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

@@ -1,13 +1,13 @@
-package com.trameo.core.navigation
+package com.market.trameo.core.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.trameo.features.login.ForgotPassWordScreem
-import com.trameo.features.login.LoginScreen
-import com.trameo.features.register.RegisterScreen
-import com.trameo.features.home.SplashScreen
+import com.market.trameo.features.forgotpassword.ForgotPassWordScreem
+import com.market.trameo.features.login.LoginScreen
+import com.market.trameo.features.register.RegisterScreen
+import com.market.trameo.features.splash.SplashScreen
 
 /**
  * Rutas de navegación de la app Trameo.
@@ -71,9 +71,6 @@ fun TrameoNavGraph() {
                         popUpTo(Routes.LOGIN) { inclusive = true }
                         launchSingleTop = true
                     }
-                },
-                onBackClick = {
-                    navController.popBackStack()
                 }
             )
         }

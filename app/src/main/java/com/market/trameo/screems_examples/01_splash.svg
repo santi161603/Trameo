@@ -1,0 +1,27 @@
+<svg width="390" height="844" viewBox="0 0 390 844" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="390" height="844" fill="#D9562A"/>
+  
+  <!-- Subtle pattern circles -->
+  <circle cx="50" cy="100" r="180" fill="#C44D25" opacity="0.3"/>
+  <circle cx="350" cy="750" r="200" fill="#C44D25" opacity="0.3"/>
+  <circle cx="390" cy="400" r="120" fill="#E8A15A" opacity="0.1"/>
+  
+  <!-- Logo placeholder circle -->
+  <circle cx="195" cy="340" r="70" fill="#F6F4EE"/>
+  <!-- Logo T icon -->
+  <text x="195" y="360" font-family="Arial, sans-serif" font-size="60" font-weight="bold" fill="#D9562A" text-anchor="middle" dominant-baseline="middle">T</text>
+  
+  <!-- App name -->
+  <text x="195" y="460" font-family="Arial, sans-serif" font-size="42" font-weight="bold" fill="#F6F4EE" text-anchor="middle" letter-spacing="3">Trameo</text>
+  
+  <!-- Tagline -->
+  <text x="195" y="500" font-family="Arial, sans-serif" font-size="15" fill="#F6F4EE" text-anchor="middle" opacity="0.85">Intercambia lo que tienes por lo que necesitas</text>
+  
+  <!-- Loading indicator -->
+  <rect x="155" y="560" width="80" height="4" rx="2" fill="#F6F4EE" opacity="0.3"/>
+  <rect x="155" y="560" width="40" height="4" rx="2" fill="#F6F4EE" opacity="0.8"/>
+  
+  <!-- Bottom branding -->
+  <text x="195" y="790" font-family="Arial, sans-serif" font-size="12" fill="#F6F4EE" text-anchor="middle" opacity="0.5">Red de trueque comunitario</text>
+</svg>

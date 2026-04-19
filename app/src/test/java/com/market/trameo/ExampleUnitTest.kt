@@ -1,4 +1,4 @@
-package com.myprimeraapp
+package com.market.trameo
 
 import org.junit.Test
 

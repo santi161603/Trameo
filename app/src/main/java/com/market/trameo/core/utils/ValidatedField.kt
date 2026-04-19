@@ -1,4 +1,4 @@
-package com.trameo.core.util
+package com.market.trameo.core.utils
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
