@@ -2,6 +2,7 @@ package com.market.trameo.features.perfil
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -54,7 +55,8 @@ fun PerfilScreen(
     onHomeClick: () -> Unit,
     onTruequesClick: () -> Unit,
     onMisObjetosClick: () -> Unit,
-    onPublicarClick: () -> Unit = {}
+    onPublicarClick: () -> Unit = {},
+    onChatsClick: () -> Unit = {}
 ) {
     Scaffold(
         containerColor = Marfil,
@@ -111,6 +113,7 @@ fun PerfilScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 MenuItem("Historial de intercambios")
+                MenuItem("Chats", onClick = onChatsClick)
                 MenuItem("Puntos acumulados")
                 MenuItem("Ayuda y soporte")
             }
@@ -211,7 +214,7 @@ private fun StatCard(title: String, subtitle: String, modifier: Modifier = Modif
 }
 
 @Composable
-private fun MenuItem(text: String) {
+private fun MenuItem(text: String, onClick: (() -> Unit)? = null) {
     Surface(
         shape = RoundedCornerShape(14.dp),
         color = Color.White,
@@ -219,6 +222,7 @@ private fun MenuItem(text: String) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp)
+            .let { base -> if (onClick != null) base.clickable(onClick = onClick) else base }
     ) {
         Row(
             modifier = Modifier

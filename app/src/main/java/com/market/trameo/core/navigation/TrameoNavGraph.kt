@@ -6,6 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.compose.rememberNavController
+import com.market.trameo.features.chat.ChatConversationScreen
+import com.market.trameo.features.chat.ChatListScreen
 import com.market.trameo.features.detalle.DetalleObjetoScreen
 import com.market.trameo.features.forgotpassword.ForgotPassWordScreem
 import com.market.trameo.features.home.HomeScreen
@@ -13,6 +15,7 @@ import com.market.trameo.features.intercambios.MisIntercambiosScreen
 import com.market.trameo.features.login.LoginScreen
 import com.market.trameo.features.misobjetos.MisObjetosScreen
 import com.market.trameo.features.perfil.PerfilScreen
+import com.market.trameo.features.proponerintercambio.ProponerIntercambioScreen
 import com.market.trameo.features.publicar.PublicarScreen
 import com.market.trameo.features.register.RegisterScreen
 import com.market.trameo.features.resetpassword.ResetPasswordScreen
@@ -27,9 +30,12 @@ object Routes {
     const val LOGIN = "login"
     const val HOME = "home"
     const val DETALLE_OBJETO = "detalle_objeto"
+    const val CHAT_LIST = "chat_list"
+    const val CHAT_CONVERSACION = "chat_conversacion"
     const val MIS_OBJETOS = "mis_objetos"
     const val TRUEQUES = "trueques"
     const val PERFIL = "perfil"
+    const val PROPONER_INTERCAMBIO = "proponer_intercambio"
     const val PUBLICAR = "publicar"
     const val REGISTER = "register"
     const val FORGOT_PASSWORD = "forgot_password"
@@ -37,6 +43,8 @@ object Routes {
     const val RESET_PASSWORD = "reset_password"
 
     fun detalleObjetoRoute(id: Int): String = "$DETALLE_OBJETO/$id"
+    fun proponerIntercambioRoute(id: Int): String = "$PROPONER_INTERCAMBIO/$id"
+    fun chatConversacionRoute(chatId: Int): String = "$CHAT_CONVERSACION/$chatId"
 }
 
 /**
@@ -116,12 +124,50 @@ fun TrameoNavGraph() {
             )
         }
 
+        composable(Routes.CHAT_LIST) {
+            ChatListScreen(
+                onBackClick = { navController.popBackStack() },
+                onChatClick = { chatId ->
+                    navController.navigate(Routes.chatConversacionRoute(chatId)) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = "${Routes.CHAT_CONVERSACION}/{chatId}",
+            arguments = listOf(navArgument("chatId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val chatId = backStackEntry.arguments?.getInt("chatId") ?: -1
+            ChatConversationScreen(
+                chatId = chatId,
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
         composable(
             route = "${Routes.DETALLE_OBJETO}/{id}",
             arguments = listOf(navArgument("id") { type = NavType.IntType })
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getInt("id") ?: -1
             DetalleObjetoScreen(
+                objectId = id,
+                onBackClick = { navController.popBackStack() },
+                onProponerIntercambioClick = { objectId ->
+                    navController.navigate(Routes.proponerIntercambioRoute(objectId)) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = "${Routes.PROPONER_INTERCAMBIO}/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getInt("id") ?: -1
+            ProponerIntercambioScreen(
                 objectId = id,
                 onBackClick = { navController.popBackStack() }
             )
@@ -171,6 +217,11 @@ fun TrameoNavGraph() {
                 },
                 onPublicarClick = {
                     navController.navigate(Routes.PUBLICAR) {
+                        launchSingleTop = true
+                    }
+                },
+                onChatsClick = {
+                    navController.navigate(Routes.CHAT_LIST) {
                         launchSingleTop = true
                     }
                 }

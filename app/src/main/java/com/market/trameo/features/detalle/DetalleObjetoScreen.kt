@@ -51,7 +51,8 @@ import com.market.trameo.ui.theme.Terracota
 @Composable
 fun DetalleObjetoScreen(
     objectId: Int,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onProponerIntercambioClick: (Int) -> Unit
 ) {
     val item = HomeObjectsData.findById(objectId)
 
@@ -178,7 +179,7 @@ fun DetalleObjetoScreen(
                 Spacer(modifier = Modifier.height(18.dp))
 
                 Button(
-                    onClick = {},
+                    onClick = { onProponerIntercambioClick(item.id) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
@@ -186,7 +187,7 @@ fun DetalleObjetoScreen(
                     shape = RoundedCornerShape(14.dp),
                     contentPadding = PaddingValues(horizontal = 16.dp)
                 ) {
-                    Text("Solicitar intercambio")
+                    Text("Proponer intercambio")
                 }
                 Spacer(modifier = Modifier.height(20.dp))
             }

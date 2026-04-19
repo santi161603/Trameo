@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -66,7 +67,8 @@ fun HomeScreen(
     onPerfilClick: () -> Unit = {},
     onMisObjetosClick: () -> Unit = {},
     onObjectClick: (Int) -> Unit = {},
-    onPublicarClick: () -> Unit = {}
+    onPublicarClick: () -> Unit = {},
+    onChatsClick: () -> Unit = {}
 ) {
     val objects by viewModel.items.collectAsState()
 
@@ -121,7 +123,8 @@ fun HomeScreen(
         HomeContent(
             padding = padding,
             items = objects,
-            onObjectClick = onObjectClick
+            onObjectClick = onObjectClick,
+            onChatsClick = onChatsClick
         )
     }
 }
@@ -130,7 +133,8 @@ fun HomeScreen(
 private fun HomeContent(
     padding: PaddingValues,
     items: List<HomeObjectItem>,
-    onObjectClick: (Int) -> Unit
+    onObjectClick: (Int) -> Unit,
+    onChatsClick: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -141,7 +145,7 @@ private fun HomeContent(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         item {
-            HomeHeader()
+            HomeHeader(onChatsClick = onChatsClick)
             Spacer(modifier = Modifier.height(12.dp))
             HomeSearchBox()
             Spacer(modifier = Modifier.height(12.dp))
@@ -167,7 +171,7 @@ private fun HomeContent(
 }
 
 @Composable
-private fun HomeHeader() {
+private fun HomeHeader(onChatsClick: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -203,11 +207,19 @@ private fun HomeHeader() {
             )
         }
 
-        IconButton(onClick = {}) {
-            Icon(
-                imageVector = Icons.Default.NotificationsNone,
-                contentDescription = "Notificaciones"
-            )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            IconButton(onClick = {}) {
+                Icon(
+                    imageVector = Icons.Default.NotificationsNone,
+                    contentDescription = "Notificaciones"
+                )
+            }
+            IconButton(onClick = onChatsClick) {
+                Icon(
+                    imageVector = Icons.Outlined.ChatBubbleOutline,
+                    contentDescription = "Chats"
+                )
+            }
         }
     }
 }
