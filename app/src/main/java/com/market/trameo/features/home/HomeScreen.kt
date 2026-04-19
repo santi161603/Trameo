@@ -1,12 +1,14 @@
 package com.market.trameo.features.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,17 +20,17 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Autorenew
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -37,12 +39,22 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.market.trameo.R
+import com.market.trameo.core.component.BottomNavItem
+import com.market.trameo.core.component.TrameoBottomNavigation
+import com.market.trameo.core.navigation.Routes
 import com.market.trameo.ui.theme.Marfil
+import com.market.trameo.ui.theme.MarfilVariant
 import com.market.trameo.ui.theme.Terracota
 
 @Composable
@@ -54,29 +66,39 @@ fun HomeScreen(
     Scaffold(
         containerColor = Marfil,
         bottomBar = {
-            BottomAppBar(
-                containerColor = Color.White,
-                tonalElevation = 6.dp
-            ) {
-                NavigationBarItem(
-                    selected = true,
-                    onClick = {},
-                    icon = { Icon(Icons.Default.Home, contentDescription = "Inicio") },
-                    label = { Text("Inicio") }
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = {},
-                    icon = { Icon(Icons.Default.Notifications, contentDescription = "Alertas") },
-                    label = { Text("Alertas") }
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = {},
-                    icon = { Icon(Icons.Default.Person, contentDescription = "Perfil") },
-                    label = { Text("Perfil") }
-                )
-            }
+            TrameoBottomNavigation(
+                items = listOf(
+                    BottomNavItem(
+                        route = Routes.HOME,
+                        title = "Home",
+                        icon = Icons.Default.Home,
+                        contentDescription = "Home"
+                    ),
+                    BottomNavItem(
+                        route = "mis_objetos",
+                        title = "Mis objetos",
+                        icon = Icons.AutoMirrored.Filled.List,
+                        contentDescription = "Mis objetos"
+                    ),
+                    BottomNavItem(
+                        route = "trueques",
+                        title = "Trueques",
+                        icon = Icons.Default.Autorenew,
+                        contentDescription = "Trueques"
+                    ),
+                    BottomNavItem(
+                        route = "perfil",
+                        title = "Perfil",
+                        icon = Icons.Default.Person,
+                        contentDescription = "Perfil"
+                    )
+                ),
+                currentRoute = Routes.HOME,
+                onItemClick = {},
+                onCenterClick = {},
+                centerIcon = Icons.AutoMirrored.Filled.List,
+                centerContentDescription = "Publicar"
+            )
         }
     ) { padding ->
         HomeContent(
@@ -96,36 +118,24 @@ private fun HomeContent(
             .fillMaxSize()
             .padding(padding)
             .background(Marfil),
-        contentPadding = PaddingValues(16.dp),
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 24.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         item {
-            Text(
-                text = "Hola, Santiago",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Text(
-                text = "Encuentra objetos para intercambiar",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            HomeHeader()
+            Spacer(modifier = Modifier.height(12.dp))
+            HomeSearchBox()
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                HomeChip(text = "Movilidad")
+                HomeChip(text = "Hogar")
+                HomeChip(text = "Tecnologia")
+            }
             Spacer(modifier = Modifier.height(14.dp))
-            OutlinedTextField(
-                value = "",
-                onValueChange = {},
-                modifier = Modifier.fillMaxWidth(),
-                enabled = false,
-                leadingIcon = {
-                    Icon(Icons.Outlined.Search, contentDescription = "Buscar")
-                },
-                placeholder = { Text("Buscar por nombre o categoria") },
-                shape = RoundedCornerShape(14.dp)
-            )
-            Spacer(modifier = Modifier.height(4.dp))
+            HomeBanner()
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Objetos disponibles",
+                text = "Objetos cerca de ti",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
@@ -138,56 +148,200 @@ private fun HomeContent(
 }
 
 @Composable
-private fun HomeObjectCard(item: HomeObjectItem) {
-    Card(
+private fun HomeHeader() {
+    Row(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(modifier = Modifier.padding(14.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Surface(
-                    modifier = Modifier.size(42.dp),
-                    shape = CircleShape,
-                    color = Terracota.copy(alpha = 0.15f)
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Text(
-                            text = item.category.take(1),
-                            color = Terracota,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.width(10.dp))
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = item.title,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Text(
-                        text = "${item.category} • ${item.location}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-                Text(
-                    text = "${item.points} pts",
-                    color = Terracota,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.labelLarge
-                )
-            }
-            Spacer(modifier = Modifier.height(8.dp))
+        val context = LocalContext.current
+        AsyncImage(
+            model = ImageRequest.Builder(context)
+                .data("https://picsum.photos/seed/trameo-profile/200/200")
+                .crossfade(true)
+                .build(),
+            contentDescription = "Perfil",
+            placeholder = painterResource(id = R.drawable.ic_launcher_background),
+            error = painterResource(id = R.drawable.ic_launcher_foreground),
+            modifier = Modifier
+                .size(52.dp)
+                .clip(CircleShape)
+                .border(1.dp, Color.White, CircleShape),
+            contentScale = ContentScale.Crop
+        )
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = item.description,
+                text = "Hola, Santiago",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = "Encuentra objetos para intercambiar",
                 style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+
+        IconButton(onClick = {}) {
+            Icon(
+                imageVector = Icons.Default.NotificationsNone,
+                contentDescription = "Notificaciones"
+            )
+        }
+    }
+}
+
+@Composable
+private fun HomeSearchBox() {
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = Color.White,
+        tonalElevation = 2.dp,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 14.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(Icons.Outlined.Search, contentDescription = "Buscar")
+            Spacer(modifier = Modifier.width(10.dp))
+            Text(
+                text = "Buscar por nombre o categoria",
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
 }
 
+@Composable
+private fun HomeBanner() {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(185.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        val context = LocalContext.current
+        Box(modifier = Modifier.fillMaxSize()) {
+            AsyncImage(
+                model = ImageRequest.Builder(context)
+                    .data("https://picsum.photos/seed/trameo-home-banner/1000/600")
+                    .crossfade(true)
+                    .build(),
+                contentDescription = "Banner",
+                placeholder = painterResource(id = R.drawable.ic_launcher_background),
+                error = painterResource(id = R.drawable.ic_launcher_foreground),
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth(0.68f)
+                    .background(Color.Black.copy(alpha = 0.28f))
+            )
+
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(14.dp)
+            ) {
+                Text(
+                    text = "Encuentra trueques cerca de ti",
+                    color = Color.White,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "Nuevos objetos cada dia",
+                    color = Color.White.copy(alpha = 0.9f),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun HomeObjectCard(item: HomeObjectItem) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(18.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        val context = LocalContext.current
+        Column {
+            AsyncImage(
+                model = ImageRequest.Builder(context)
+                    .data(item.imageUrl)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = item.title,
+                placeholder = painterResource(id = R.drawable.ic_launcher_background),
+                error = painterResource(id = R.drawable.ic_launcher_foreground),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(170.dp),
+                contentScale = ContentScale.Crop
+            )
+
+            Column(modifier = Modifier.padding(14.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = item.title,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Text(
+                            text = "${item.category} • ${item.location}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Surface(
+                        shape = RoundedCornerShape(999.dp),
+                        color = Terracota.copy(alpha = 0.14f)
+                    ) {
+                        Text(
+                            text = "${item.points} pts",
+                            color = Terracota,
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                        )
+                    }
+                }
+                Text(
+                    text = item.description,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun HomeChip(text: String) {
+    Surface(
+        shape = RoundedCornerShape(999.dp),
+        color = MarfilVariant,
+        modifier = Modifier.border(1.dp, Color.White, RoundedCornerShape(999.dp))
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelLarge,
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+        )
+    }
+}

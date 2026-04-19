@@ -6,7 +6,8 @@ data class HomeObjectItem(
     val category: String,
     val location: String,
     val points: Int,
-    val description: String
+    val description: String,
+    val imageUrl: String
 )
 
 object HomeObjectsData {
@@ -17,7 +18,8 @@ object HomeObjectsData {
             category = "Movilidad",
             location = "Medellin",
             points = 120,
-            description = "Bicicleta en buen estado, ideal para recorridos cortos."
+            description = "Bicicleta en buen estado, ideal para recorridos cortos.",
+            imageUrl = "https://picsum.photos/seed/trameo-bike/800/500"
         ),
         HomeObjectItem(
             id = 2,
@@ -25,7 +27,8 @@ object HomeObjectsData {
             category = "Hogar",
             location = "Bogota",
             points = 80,
-            description = "Licuadora funcional con vaso de vidrio."
+            description = "Licuadora funcional con vaso de vidrio.",
+            imageUrl = "https://picsum.photos/seed/trameo-blender/800/500"
         ),
         HomeObjectItem(
             id = 3,
@@ -33,7 +36,8 @@ object HomeObjectsData {
             category = "Musica",
             location = "Cali",
             points = 150,
-            description = "Incluye funda, cuerdas nuevas y afinador basico."
+            description = "Incluye funda, cuerdas nuevas y afinador basico.",
+            imageUrl = "https://picsum.photos/seed/trameo-guitar/800/500"
         ),
         HomeObjectItem(
             id = 4,
@@ -41,8 +45,8 @@ object HomeObjectsData {
             category = "Educacion",
             location = "Barranquilla",
             points = 60,
-            description = "Coleccion variada de literatura y desarrollo personal."
+            description = "Coleccion variada de literatura y desarrollo personal.",
+            imageUrl = "https://picsum.photos/seed/trameo-books/800/500"
         )
     )
 }
-
