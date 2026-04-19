@@ -2,6 +2,7 @@ package com.market.trameo.features.forgotpassword
 
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
+import com.market.trameo.core.auth.MockAuthStore
 import com.market.trameo.core.utils.RequestResult
 import com.market.trameo.core.utils.ValidatedField
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,10 +12,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class ForgotPasswordViewModel @Inject constructor() : ViewModel(){
+class ForgotPasswordViewModel @Inject constructor(
+    private val authStore: MockAuthStore
+) : ViewModel() {
 
     // Campo de email con validación usando ValidatedField
-    val email = ValidatedField("") { value ->
+    val email = ValidatedField(authStore.registeredEmail) { value ->
         when {
             value.isEmpty() -> "El correo electrónico es obligatorio"
             !Patterns.EMAIL_ADDRESS.matcher(value)
@@ -36,7 +39,7 @@ class ForgotPasswordViewModel @Inject constructor() : ViewModel(){
     fun sendRecoveryEmail() {
         if (isFormValid) {
             // Simulación: solo el correo registrado recibe el enlace
-            _recoveryResult.value = if (email.value == "carlos@email.com") {
+            _recoveryResult.value = if (authStore.canRecover(email.value)) {
                 RequestResult.Success("Se ha enviado un enlace de recuperación a ${email.value}")
             } else {
                 RequestResult.Failure("No se encontró una cuenta asociada a este correo")

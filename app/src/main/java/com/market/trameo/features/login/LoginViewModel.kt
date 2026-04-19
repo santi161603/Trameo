@@ -3,6 +3,7 @@ package com.market.trameo.features.login
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.market.trameo.core.auth.MockAuthStore
 import com.market.trameo.core.utils.RequestResult
 import com.market.trameo.core.utils.ValidatedField
 import kotlinx.coroutines.delay
@@ -14,10 +15,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor() : ViewModel() {
+class LoginViewModel @Inject constructor(
+    private val authStore: MockAuthStore
+) : ViewModel() {
 
     // Campos validados usando ValidatedField
-    val email = ValidatedField("santi@mail.com") { value ->
+    val email = ValidatedField(authStore.registeredEmail) { value ->
         when {
             value.isEmpty() -> "El email es obligatorio"
             !Patterns.EMAIL_ADDRESS.matcher(value).matches() -> "Ingresa un email válido"
@@ -25,7 +28,7 @@ class LoginViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    val password = ValidatedField("123456") { value ->
+    val password = ValidatedField(authStore.currentPasswordValue()) { value ->
         when {
             value.isEmpty() -> "La contraseña es obligatoria"
             value.length < 6 -> "La contraseña debe tener al menos 6 caracteres"
@@ -57,7 +60,7 @@ class LoginViewModel @Inject constructor() : ViewModel() {
                 delay(1500)
 
                 // Simulación de un proceso de login con datos estáticos
-                _loginResult.value = if (email.value == "santi@mail.com" && password.value == "123456") {
+                _loginResult.value = if (authStore.isValidLogin(email.value, password.value)) {
                     RequestResult.Success("Login exitoso")
                 } else {
                     RequestResult.Failure("Credenciales inválidas")

@@ -24,6 +24,7 @@ import com.market.trameo.ui.theme.TrameoTheme
 @Composable
 fun ForgotPassWordScreem(
     onNavigateBack: () -> Unit = {},
+    onCodeSent: () -> Unit = {},
     viewModel: ForgotPasswordViewModel = hiltViewModel()
 ){// Estado para gestionar los snackbars
 val snackbarHostState = remember { SnackbarHostState() }
@@ -39,10 +40,10 @@ LaunchedEffect(recoveryResult) {
         }
         snackbarHostState.showSnackbar(message)
 
-        // Si fue exitoso, navegar hacia atrás después de un breve delay
+        // Si fue exitoso, ir al paso de ingresar código.
         if (result is RequestResult.Success) {
-            delay(1500)
-            onNavigateBack()
+            delay(700)
+            onCodeSent()
         }
 
         // Resetear el resultado después de mostrarlo
