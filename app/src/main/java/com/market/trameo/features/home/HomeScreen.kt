@@ -59,7 +59,8 @@ import com.market.trameo.ui.theme.Terracota
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    onTruequesClick: () -> Unit = {}
 ) {
     val objects by viewModel.items.collectAsState()
 
@@ -81,7 +82,7 @@ fun HomeScreen(
                         contentDescription = "Mis objetos"
                     ),
                     BottomNavItem(
-                        route = "trueques",
+                        route = Routes.TRUEQUES,
                         title = "Trueques",
                         icon = Icons.Default.Autorenew,
                         contentDescription = "Trueques"
@@ -94,7 +95,11 @@ fun HomeScreen(
                     )
                 ),
                 currentRoute = Routes.HOME,
-                onItemClick = {},
+                onItemClick = { item ->
+                    if (item.route == Routes.TRUEQUES) {
+                        onTruequesClick()
+                    }
+                },
                 onCenterClick = {},
                 centerIcon = Icons.AutoMirrored.Filled.List,
                 centerContentDescription = "Publicar"

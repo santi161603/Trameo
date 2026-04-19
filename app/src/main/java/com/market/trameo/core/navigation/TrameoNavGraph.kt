@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.market.trameo.features.forgotpassword.ForgotPassWordScreem
 import com.market.trameo.features.home.HomeScreen
+import com.market.trameo.features.intercambios.MisIntercambiosScreen
 import com.market.trameo.features.login.LoginScreen
 import com.market.trameo.features.register.RegisterScreen
 import com.market.trameo.features.resetpassword.ResetPasswordScreen
@@ -19,6 +20,7 @@ object Routes {
     const val SPLASH = "splash"
     const val LOGIN = "login"
     const val HOME = "home"
+    const val TRUEQUES = "trueques"
     const val REGISTER = "register"
     const val FORGOT_PASSWORD = "forgot_password"
     const val VERIFY_CODE = "verify_code"
@@ -73,7 +75,23 @@ fun TrameoNavGraph() {
         }
 
         composable(Routes.HOME) {
-            HomeScreen()
+            HomeScreen(
+                onTruequesClick = {
+                    navController.navigate(Routes.TRUEQUES) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(Routes.TRUEQUES) {
+            MisIntercambiosScreen(
+                onHomeClick = {
+                    navController.navigate(Routes.HOME) {
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
 
         // ── Pantalla Registro ───────────────────────────────

@@ -88,6 +88,7 @@ fun TrameoBottomNavigation(
             onClick = onCenterClick,
             modifier = Modifier
                 .align(Alignment.TopCenter)
+                .offset(x = 4.dp)
                 .offset(y = (-14).dp)
                 .size(62.dp),
             containerColor = Terracota,
