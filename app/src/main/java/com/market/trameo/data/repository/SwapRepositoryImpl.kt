@@ -23,7 +23,7 @@ class SwapRepositoryImpl @Inject constructor() : SwapRepository {
             SwapObject(
                 id = "seed-swap-1",
                 ownerId = "seed-user-1",
-                photos = listOf(Uri.parse("https://picsum.photos/seed/swap-1/900/700")),
+                photos = listOf(Uri.parse("https://picsum.photos/seed/swap-2/900/700")),
                 name = "Patineta urbana",
                 description = "Patineta en buen estado, ideal para trayectos cortos.",
                 category = ObjectCategory.DEPORTES,

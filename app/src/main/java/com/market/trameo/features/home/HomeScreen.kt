@@ -84,7 +84,8 @@ fun HomeScreen(
     onMisObjetosClick: () -> Unit = {},
     onObjectClick: (String) -> Unit = {},
     onPublicarClick: () -> Unit = {},
-    onChatsClick: () -> Unit = {}
+    onChatsClick: () -> Unit = {},
+    onMapaClick: () -> Unit = {}
 ) {
     val objects by viewModel.items.collectAsState()
     val query by viewModel.searchQuery.collectAsState()
@@ -148,7 +149,8 @@ fun HomeScreen(
             onCategoryChange = viewModel::onCategoryFilterChange,
             currentUser = currentUser,
             onObjectClick = onObjectClick,
-            onChatsClick = onChatsClick
+            onChatsClick = onChatsClick,
+            onMapaClick = onMapaClick
         )
     }
 }
@@ -163,7 +165,8 @@ private fun HomeContent(
     onCategoryChange: (ObjectCategory?) -> Unit,
     currentUser: User?,
     onObjectClick: (String) -> Unit,
-    onChatsClick: () -> Unit
+    onChatsClick: () -> Unit,
+    onMapaClick: () -> Unit
 ) {
     val favorites = remember { mutableStateMapOf<String, Boolean>() }
 
@@ -195,7 +198,7 @@ private fun HomeContent(
                     onCategoryChange = onCategoryChange
                 )
                 Spacer(modifier = Modifier.height(14.dp))
-                HomeBanner()
+                HomeBanner(onClick = onMapaClick)
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "Objetos cerca de ti",
@@ -332,11 +335,12 @@ private fun CategoryFilterRow(
 }
 
 @Composable
-private fun HomeBanner() {
+private fun HomeBanner(onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(185.dp),
+            .height(185.dp)
+            .clickable(onClick = onClick),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
@@ -367,13 +371,13 @@ private fun HomeBanner() {
                     .padding(14.dp)
             ) {
                 Text(
-                    text = "Encuentra trueques cerca de ti",
+                    text = "Cliquea aqui para encontrar trueques cerca de ti",
                     color = Color.White,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Nuevos objetos cada dia",
+                    text = "Toca para ver el mapa de tradeos cercanos",
                     color = Color.White.copy(alpha = 0.9f),
                     style = MaterialTheme.typography.bodySmall
                 )

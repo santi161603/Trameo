@@ -11,5 +11,6 @@ data class User(
     val city: String,
     val address: String,
     val phoneNumber: String,
-    val profilePhotoUri: String? = null
+    val profilePhotoUri: String? = null,
+    val role: UserRole = UserRole.CLIENTE
 )

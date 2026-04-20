@@ -2,6 +2,7 @@ package com.market.trameo.data.repository
 
 import com.market.trameo.data.model.UserLocal
 import com.market.trameo.domain.model.User
+import com.market.trameo.domain.model.UserRole
 import com.market.trameo.domain.repository.UserRepository
 import java.util.UUID
 import javax.inject.Inject
@@ -15,6 +16,10 @@ import kotlinx.coroutines.withContext
 @Singleton
 class UserRepositoryImpl @Inject constructor() : UserRepository {
 
+    private companion object {
+        const val ADMIN_EMAIL = "santiagoaceroospina@gmail.com"
+    }
+
     private val userList = mutableListOf(
         UserLocal(
             id = "seed-user-1",
@@ -24,7 +29,8 @@ class UserRepositoryImpl @Inject constructor() : UserRepository {
             city = "Bogota",
             address = "Calle 123 #45-67",
             phoneNumber = "3001234567",
-            profilePhotoUri = "https://picsum.photos/seed/trameo-profile-seed/200/200"
+            profilePhotoUri = "https://picsum.photos/seed/trameo-profile-seed/200/200",
+            role = UserRole.ADMIN
         )
     )
 
@@ -34,7 +40,8 @@ class UserRepositoryImpl @Inject constructor() : UserRepository {
     override suspend fun save(user: User): User = withContext(Dispatchers.IO) {
         val normalizedUser = user.copy(
             id = user.id.ifBlank { UUID.randomUUID().toString() },
-            email = user.email.trim()
+            email = user.email.trim(),
+            role = if (user.email.trim().equals(ADMIN_EMAIL, ignoreCase = true)) UserRole.ADMIN else user.role
         )
         userList.add(normalizedUser.toLocal())
         _users.value = userList.map { it.toDomain() }
@@ -62,7 +69,8 @@ class UserRepositoryImpl @Inject constructor() : UserRepository {
             city = city,
             address = address,
             phoneNumber = phoneNumber,
-            profilePhotoUri = profilePhotoUri
+            profilePhotoUri = profilePhotoUri,
+            role = role
         )
     }
 
@@ -75,7 +83,8 @@ class UserRepositoryImpl @Inject constructor() : UserRepository {
             city = city,
             address = address,
             phoneNumber = phoneNumber,
-            profilePhotoUri = profilePhotoUri
+            profilePhotoUri = profilePhotoUri,
+            role = role
         )
     }
 }

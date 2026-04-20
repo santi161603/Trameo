@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.market.trameo.core.utils.RequestResult
 import com.market.trameo.core.utils.ValidatedField
 import com.market.trameo.domain.model.User
+import com.market.trameo.domain.model.UserRole
 import com.market.trameo.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -116,7 +117,8 @@ class RegisterViewModel @Inject constructor(
                         city = city.value.trim(),
                         address = address.value.trim(),
                         phoneNumber = phoneNumber.value.trim(),
-                        profilePhotoUri = _profilePhotoUri.value
+                        profilePhotoUri = _profilePhotoUri.value,
+                        role = UserRole.CLIENTE
                     )
                 )
             }.onSuccess {

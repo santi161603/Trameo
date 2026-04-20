@@ -3,6 +3,7 @@ package com.market.trameo.features.perfil
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -54,6 +55,7 @@ import com.market.trameo.core.navigation.Routes
 import com.market.trameo.core.theme.Marfil
 import com.market.trameo.core.theme.Terracota
 import com.market.trameo.domain.model.User
+import com.market.trameo.domain.model.UserRole
 
 @Composable
 fun PerfilScreen(
@@ -62,9 +64,11 @@ fun PerfilScreen(
     onMisObjetosClick: () -> Unit,
     onPublicarClick: () -> Unit = {},
     onChatsClick: () -> Unit = {},
+    onAdminOptionsClick: () -> Unit = {},
     viewModel: PerfilViewModel = hiltViewModel()
 ) {
     val currentUser by viewModel.currentUser.collectAsState()
+    val isAdmin = currentUser?.role == UserRole.ADMIN
 
     Scaffold(
         containerColor = Marfil,
@@ -113,6 +117,20 @@ fun PerfilScreen(
                 MenuItem("Metodos de pago")
                 MenuItem("Seguridad")
                 MenuItem("Notificaciones")
+                if (isAdmin) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Administracion",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    MenuItem(
+                        text = "Opciones de administrador",
+                        highlighted = true,
+                        onClick = onAdminOptionsClick
+                    )
+                }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "Actividad",
@@ -227,6 +245,7 @@ private fun MenuItem(text: String, onClick: (() -> Unit)? = null) {
         shape = RoundedCornerShape(14.dp),
         color = Color.White,
         tonalElevation = 1.dp,
+        border = null,
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp)
@@ -241,6 +260,44 @@ private fun MenuItem(text: String, onClick: (() -> Unit)? = null) {
         ) {
             Text(text = text, style = MaterialTheme.typography.bodyMedium)
             Icon(Icons.Default.ChevronRight, contentDescription = null)
+        }
+    }
+}
+
+@Composable
+private fun MenuItem(
+    text: String,
+    highlighted: Boolean,
+    onClick: (() -> Unit)? = null
+) {
+    Surface(
+        shape = RoundedCornerShape(14.dp),
+        color = if (highlighted) Terracota.copy(alpha = 0.12f) else Color.White,
+        tonalElevation = if (highlighted) 2.dp else 1.dp,
+        border = if (highlighted) BorderStroke(1.dp, Terracota.copy(alpha = 0.65f)) else null,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp)
+            .let { base -> if (onClick != null) base.clickable(onClick = onClick) else base }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 14.dp, vertical = 14.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyMedium,
+                color = if (highlighted) Terracota else MaterialTheme.colorScheme.onSurface,
+                fontWeight = if (highlighted) FontWeight.SemiBold else FontWeight.Normal
+            )
+            Icon(
+                Icons.Default.ChevronRight,
+                contentDescription = null,
+                tint = if (highlighted) Terracota else MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }

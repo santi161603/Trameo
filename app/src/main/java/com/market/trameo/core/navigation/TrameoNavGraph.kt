@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.compose.rememberNavController
+import com.market.trameo.features.admin.AdminScreen
 import com.market.trameo.features.chat.ChatConversationScreen
 import com.market.trameo.features.chat.ChatListScreen
 import com.market.trameo.features.detalle.DetalleObjetoScreen
@@ -13,6 +14,7 @@ import com.market.trameo.features.forgotpassword.ForgotPassWordScreem
 import com.market.trameo.features.home.HomeScreen
 import com.market.trameo.features.intercambios.MisIntercambiosScreen
 import com.market.trameo.features.login.LoginScreen
+import com.market.trameo.features.mapa.MapaTruequesMockScreen
 import com.market.trameo.features.misobjetos.MisObjetosScreen
 import com.market.trameo.features.perfil.PerfilScreen
 import com.market.trameo.features.proponerintercambio.ProponerIntercambioScreen
@@ -37,10 +39,12 @@ object Routes {
     const val PERFIL = "perfil"
     const val PROPONER_INTERCAMBIO = "proponer_intercambio"
     const val PUBLICAR = "publicar"
+    const val MAPA_TRUEQUES = "mapa_trueques"
     const val REGISTER = "register"
     const val FORGOT_PASSWORD = "forgot_password"
     const val VERIFY_CODE = "verify_code"
     const val RESET_PASSWORD = "reset_password"
+    const val ADMIN = "admin"
 
     fun detalleObjetoRoute(id: String): String = "$DETALLE_OBJETO/$id"
     fun proponerIntercambioRoute(id: Int): String = "$PROPONER_INTERCAMBIO/$id"
@@ -120,7 +124,18 @@ fun TrameoNavGraph() {
                     navController.navigate(Routes.PUBLICAR) {
                         launchSingleTop = true
                     }
+                },
+                onMapaClick = {
+                    navController.navigate(Routes.MAPA_TRUEQUES) {
+                        launchSingleTop = true
+                    }
                 }
+            )
+        }
+
+        composable(Routes.MAPA_TRUEQUES) {
+            MapaTruequesMockScreen(
+                onBackClick = { navController.popBackStack() }
             )
         }
 
@@ -224,7 +239,18 @@ fun TrameoNavGraph() {
                     navController.navigate(Routes.CHAT_LIST) {
                         launchSingleTop = true
                     }
+                },
+                onAdminOptionsClick = {
+                    navController.navigate(Routes.ADMIN) {
+                        launchSingleTop = true
+                    }
                 }
+            )
+        }
+
+        composable(Routes.ADMIN) {
+            AdminScreen(
+                onBackClick = { navController.popBackStack() }
             )
         }
 
