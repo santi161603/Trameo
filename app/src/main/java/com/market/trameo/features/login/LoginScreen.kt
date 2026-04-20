@@ -42,10 +42,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.market.trameo.R
 import com.market.trameo.core.utils.RequestResult
-import com.market.trameo.ui.theme.GrisPizarra
-import com.market.trameo.ui.theme.Marfil
-import com.market.trameo.ui.theme.Terracota
-import com.market.trameo.ui.theme.TrameoTheme
+import com.market.trameo.core.theme.GrisPizarra
+import com.market.trameo.core.theme.Marfil
+import com.market.trameo.core.theme.Terracota
+import com.market.trameo.core.theme.TrameoTheme
 import kotlinx.coroutines.delay
 
 @Composable
@@ -69,7 +69,6 @@ fun LoginScreen(
             }
             snackbarHostState.showSnackbar(message)
             if (result is RequestResult.Success) {
-                delay(1000)
                 onLoginSuccess()
                 viewModel.resetForm()
             }

@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.market.trameo.core.utils.RequestResult
-import com.market.trameo.ui.theme.TrameoTheme
+import com.market.trameo.core.theme.TrameoTheme
 
 @Composable
 fun ForgotPassWordScreem(

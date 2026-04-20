@@ -50,15 +50,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.market.trameo.R
 import com.market.trameo.core.component.BottomNavItem
 import com.market.trameo.core.component.TrameoBottomNavigation
 import com.market.trameo.core.navigation.Routes
-import com.market.trameo.ui.theme.Marfil
-import com.market.trameo.ui.theme.MarfilVariant
-import com.market.trameo.ui.theme.Terracota
+import com.market.trameo.core.theme.Marfil
+import com.market.trameo.core.theme.MarfilVariant
+import com.market.trameo.core.theme.Terracota
 
 @Composable
 fun HomeScreen(

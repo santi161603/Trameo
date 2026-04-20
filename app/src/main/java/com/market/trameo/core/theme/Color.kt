@@ -1,4 +1,4 @@
-package com.market.trameo.ui.theme
+package com.market.trameo.core.theme
 
 import androidx.compose.ui.graphics.Color
 
@@ -22,3 +22,4 @@ val GrisPizarraDark = Color(0xFF1A2222)
 val Marfil = Color(0xFFF6F4EE)
 val MarfilDark = Color(0xFF2F3A3A)
 val MarfilVariant = Color(0xFFEDE9DF)
+

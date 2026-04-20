@@ -6,39 +6,31 @@ import androidx.compose.runtime.setValue
 
 class ValidatedField<T>(
     private val initialValue: T,
-    private val validate: (T) -> String?
+    private val validator: (T) -> String?
 ) {
-    // Estado del valor del campo
     var value by mutableStateOf(initialValue)
         private set
 
-    // Estado para controlar cuándo mostrar el error
-    var showError by mutableStateOf(false)
+    var isTouched by mutableStateOf(false)
         private set
 
-    // Mensaje de error. get() para que sea de solo lectura desde el exterior
     val error: String?
-        get() = if (showError) validate(value) else null
+        get() = if (isTouched) validator(value) else null
 
-    // Indica si el campo es válido, es de solo lectura desde el exterior
     val isValid: Boolean
-        get() = validate(value) == null
+        get() = validator(value) == null
 
-    // Función para actualizar el valor del campo
     fun onChange(newValue: T) {
         value = newValue
-        showError = true
+        isTouched = true
     }
 
-    // ⭐ AGREGAR ESTA FUNCIÓN
-    // Función para forzar mostrar el error (útil para validación al enviar)
     fun forceShowError() {
-        showError = true
+        isTouched = true
     }
 
-    // Función para resetear el campo a su valor inicial
     fun reset() {
         value = initialValue
-        showError = false
+        isTouched = false
     }
 }

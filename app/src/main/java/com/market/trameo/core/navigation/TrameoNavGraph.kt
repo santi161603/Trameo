@@ -262,7 +262,7 @@ fun TrameoNavGraph() {
         // ── Pantalla Registro ───────────────────────────────
         composable(Routes.REGISTER) {
             RegisterScreen(
-                onRegisterSuccess = {
+                onNavigateToLogin = {
                     navController.navigate(Routes.LOGIN) {
                         popUpTo(Routes.LOGIN) { inclusive = true }
                         launchSingleTop = true

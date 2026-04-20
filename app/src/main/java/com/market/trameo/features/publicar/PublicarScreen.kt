@@ -29,8 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.market.trameo.ui.theme.Marfil
-import com.market.trameo.ui.theme.Terracota
+import com.market.trameo.core.theme.Marfil
+import com.market.trameo.core.theme.Terracota
 
 @Composable
 fun PublicarScreen(

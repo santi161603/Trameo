@@ -32,8 +32,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.market.trameo.R
-import com.market.trameo.ui.theme.Marfil
-import com.market.trameo.ui.theme.Terracota
+import com.market.trameo.core.theme.Marfil
+import com.market.trameo.core.theme.Terracota
 import kotlinx.coroutines.delay
 
 @Composable
