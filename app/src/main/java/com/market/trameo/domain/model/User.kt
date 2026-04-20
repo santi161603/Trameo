@@ -10,5 +10,6 @@ data class User(
     val password: String,
     val city: String,
     val address: String,
-    val phoneNumber: String
+    val phoneNumber: String,
+    val profilePhotoUri: String? = null
 )

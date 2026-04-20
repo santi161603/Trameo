@@ -1,6 +1,7 @@
 package com.market.trameo.features.register
 
 import android.util.Patterns
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.market.trameo.core.utils.RequestResult
@@ -18,6 +19,9 @@ import kotlinx.coroutines.launch
 class RegisterViewModel @Inject constructor(
     private val repository: UserRepository
 ) : ViewModel() {
+
+    private val _profilePhotoUri = MutableStateFlow<String?>(null)
+    val profilePhotoUri: StateFlow<String?> = _profilePhotoUri.asStateFlow()
 
     val name = ValidatedField("") { value ->
         when {
@@ -111,7 +115,8 @@ class RegisterViewModel @Inject constructor(
                         password = password.value,
                         city = city.value.trim(),
                         address = address.value.trim(),
-                        phoneNumber = phoneNumber.value.trim()
+                        phoneNumber = phoneNumber.value.trim(),
+                        profilePhotoUri = _profilePhotoUri.value
                     )
                 )
             }.onSuccess {
@@ -135,6 +140,11 @@ class RegisterViewModel @Inject constructor(
         email.reset()
         password.reset()
         confirmPassword.reset()
+        _profilePhotoUri.value = null
         _registerResult.value = null
+    }
+
+    fun onProfilePhotoSelected(uri: Uri?) {
+        _profilePhotoUri.value = uri?.toString()
     }
 }

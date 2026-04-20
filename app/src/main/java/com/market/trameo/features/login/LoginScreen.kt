@@ -46,7 +46,6 @@ import com.market.trameo.core.theme.GrisPizarra
 import com.market.trameo.core.theme.Marfil
 import com.market.trameo.core.theme.Terracota
 import com.market.trameo.core.theme.TrameoTheme
-import kotlinx.coroutines.delay
 
 @Composable
 fun LoginScreen(

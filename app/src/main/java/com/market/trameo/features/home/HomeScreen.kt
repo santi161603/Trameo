@@ -16,14 +16,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items as gridItems
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Autorenew
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.material.icons.filled.Person
@@ -34,12 +41,16 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,6 +71,10 @@ import com.market.trameo.core.navigation.Routes
 import com.market.trameo.core.theme.Marfil
 import com.market.trameo.core.theme.MarfilVariant
 import com.market.trameo.core.theme.Terracota
+import com.market.trameo.domain.model.ModerationStatus
+import com.market.trameo.domain.model.ObjectCategory
+import com.market.trameo.domain.model.SwapObject
+import com.market.trameo.domain.model.User
 
 @Composable
 fun HomeScreen(
@@ -67,11 +82,14 @@ fun HomeScreen(
     onTruequesClick: () -> Unit = {},
     onPerfilClick: () -> Unit = {},
     onMisObjetosClick: () -> Unit = {},
-    onObjectClick: (Int) -> Unit = {},
+    onObjectClick: (String) -> Unit = {},
     onPublicarClick: () -> Unit = {},
     onChatsClick: () -> Unit = {}
 ) {
     val objects by viewModel.items.collectAsState()
+    val query by viewModel.searchQuery.collectAsState()
+    val selectedCategory by viewModel.selectedCategory.collectAsState()
+    val currentUser by viewModel.currentUser.collectAsState()
 
     Scaffold(
         containerColor = Marfil,
@@ -124,6 +142,11 @@ fun HomeScreen(
         HomeContent(
             padding = padding,
             items = objects,
+            query = query,
+            selectedCategory = selectedCategory,
+            onQueryChange = viewModel::onSearchQueryChange,
+            onCategoryChange = viewModel::onCategoryFilterChange,
+            currentUser = currentUser,
             onObjectClick = onObjectClick,
             onChatsClick = onChatsClick
         )
@@ -133,46 +156,90 @@ fun HomeScreen(
 @Composable
 private fun HomeContent(
     padding: PaddingValues,
-    items: List<HomeObjectItem>,
-    onObjectClick: (Int) -> Unit,
+    items: List<SwapObject>,
+    query: String,
+    selectedCategory: ObjectCategory?,
+    onQueryChange: (String) -> Unit,
+    onCategoryChange: (ObjectCategory?) -> Unit,
+    currentUser: User?,
+    onObjectClick: (String) -> Unit,
     onChatsClick: () -> Unit
 ) {
-    LazyColumn(
+    val favorites = remember { mutableStateMapOf<String, Boolean>() }
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        state = rememberLazyGridState(),
         modifier = Modifier
             .fillMaxSize()
             .padding(padding)
             .background(Marfil),
         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        item {
-            HomeHeader(onChatsClick = onChatsClick)
-            Spacer(modifier = Modifier.height(12.dp))
-            HomeSearchBox()
-            Spacer(modifier = Modifier.height(12.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                HomeChip(text = "Movilidad")
-                HomeChip(text = "Hogar")
-                HomeChip(text = "Tecnologia")
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                HomeHeader(
+                    onChatsClick = onChatsClick,
+                    currentUser = currentUser
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                HomeSearchBox(
+                    query = query,
+                    onQueryChange = onQueryChange
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                CategoryFilterRow(
+                    selectedCategory = selectedCategory,
+                    onCategoryChange = onCategoryChange
+                )
+                Spacer(modifier = Modifier.height(14.dp))
+                HomeBanner()
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Objetos cerca de ti",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
-            Spacer(modifier = Modifier.height(14.dp))
-            HomeBanner()
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Objetos cerca de ti",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
+        }
+
+        gridItems(items, key = { it.id }) { item ->
+            val isFavorite = favorites[item.id] == true
+            HomeObjectCard(
+                item = item,
+                isFavorite = isFavorite,
+                onFavoriteClick = { favorites[item.id] = !isFavorite },
+                onClick = { onObjectClick(item.id) }
             )
         }
 
-        items(items, key = { it.id }) { item ->
-            HomeObjectCard(item) { onObjectClick(item.id) }
+        if (items.isEmpty()) {
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                Surface(
+                    shape = RoundedCornerShape(16.dp),
+                    color = Color.White,
+                    tonalElevation = 1.dp,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Aun no hay objetos para mostrar.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
         }
     }
 }
 
 @Composable
-private fun HomeHeader(onChatsClick: () -> Unit) {
+private fun HomeHeader(
+    onChatsClick: () -> Unit,
+    currentUser: User?
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -180,7 +247,7 @@ private fun HomeHeader(onChatsClick: () -> Unit) {
         val context = LocalContext.current
         AsyncImage(
             model = ImageRequest.Builder(context)
-                .data("https://picsum.photos/seed/trameo-profile/200/200")
+                .data(currentUser?.profilePhotoUri ?: "https://picsum.photos/seed/trameo-profile/200/200")
                 .crossfade(true)
                 .build(),
             contentDescription = "Perfil",
@@ -197,7 +264,7 @@ private fun HomeHeader(onChatsClick: () -> Unit) {
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = "Hola, Santiago",
+                text = "Hola, ${currentUser?.name ?: "Santiago"}",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -226,25 +293,39 @@ private fun HomeHeader(onChatsClick: () -> Unit) {
 }
 
 @Composable
-private fun HomeSearchBox() {
-    Surface(
+private fun HomeSearchBox(
+    query: String,
+    onQueryChange: (String) -> Unit
+) {
+    OutlinedTextField(
+        value = query,
+        onValueChange = onQueryChange,
+        label = { Text("Buscar por nombre o categoria") },
+        leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = "Buscar") },
+        modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        color = Color.White,
-        tonalElevation = 2.dp,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 14.dp, vertical = 14.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(Icons.Outlined.Search, contentDescription = "Buscar")
-            Spacer(modifier = Modifier.width(10.dp))
-            Text(
-                text = "Buscar por nombre o categoria",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+        singleLine = true
+    )
+}
+
+@Composable
+private fun CategoryFilterRow(
+    selectedCategory: ObjectCategory?,
+    onCategoryChange: (ObjectCategory?) -> Unit
+) {
+    val categories = listOf<ObjectCategory?>(null) + ObjectCategory.entries
+
+    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        items(categories, key = { it?.name ?: "TODOS" }) { category ->
+            val selected = selectedCategory == category
+            FilterChip(
+                selected = selected,
+                onClick = { onCategoryChange(category) },
+                label = {
+                    Text(
+                        text = category?.prettyName() ?: "Todos"
+                    )
+                }
             )
         }
     }
@@ -302,7 +383,29 @@ private fun HomeBanner() {
 }
 
 @Composable
-private fun HomeObjectCard(item: HomeObjectItem, onClick: () -> Unit) {
+private fun HomeObjectCard(
+    item: SwapObject,
+    isFavorite: Boolean,
+    onFavoriteClick: () -> Unit,
+    onClick: () -> Unit
+) {
+    val statusLabel = when (item.moderationStatus) {
+        ModerationStatus.PUBLICADO -> "Publicado"
+        ModerationStatus.PENDIENTE_VERIFICACION -> "Pendiente"
+    }
+
+    val statusColor = when (item.moderationStatus) {
+        ModerationStatus.PUBLICADO -> Terracota
+        ModerationStatus.PENDIENTE_VERIFICACION -> Color(0xFFD38A1F)
+    }
+
+    val conditionColor = when (item.condition) {
+        com.market.trameo.domain.model.ObjectCondition.NUEVO -> Color(0xFF2E7D32)
+        com.market.trameo.domain.model.ObjectCondition.COMO_NUEVO -> Color(0xFF1976D2)
+        com.market.trameo.domain.model.ObjectCondition.BUENO -> Color(0xFFF9A825)
+        com.market.trameo.domain.model.ObjectCondition.REGULAR -> Color(0xFF8D6E63)
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -313,69 +416,108 @@ private fun HomeObjectCard(item: HomeObjectItem, onClick: () -> Unit) {
     ) {
         val context = LocalContext.current
         Column {
-            AsyncImage(
-                model = ImageRequest.Builder(context)
-                    .data(item.imageUrl)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = item.title,
-                placeholder = painterResource(id = R.drawable.ic_launcher_background),
-                error = painterResource(id = R.drawable.ic_launcher_foreground),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(170.dp),
-                contentScale = ContentScale.Crop
-            )
+            Box {
+                AsyncImage(
+                    model = ImageRequest.Builder(context)
+                        .data(item.photos.firstOrNull())
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = item.name,
+                    placeholder = painterResource(id = R.drawable.ic_launcher_background),
+                    error = painterResource(id = R.drawable.ic_launcher_foreground),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(150.dp),
+                    contentScale = ContentScale.Crop
+                )
 
-            Column(modifier = Modifier.padding(14.dp)) {
+                Surface(
+                    shape = RoundedCornerShape(999.dp),
+                    color = conditionColor.copy(alpha = 0.9f),
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .align(Alignment.TopStart)
+                ) {
+                    Text(
+                        text = item.condition.prettyName(),
+                        color = Color.White,
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                }
+            }
+
+            Column(modifier = Modifier.padding(10.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = item.title,
-                            style = MaterialTheme.typography.titleMedium,
+                            text = item.name.compactTitle(),
+                            style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.SemiBold
                         )
-                        Text(
-                            text = "${item.category} • ${item.location}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
                     }
-                    Surface(
-                        shape = RoundedCornerShape(999.dp),
-                        color = Terracota.copy(alpha = 0.14f)
-                    ) {
-                        Text(
-                            text = "${item.points} pts",
-                            color = Terracota,
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                    IconButton(onClick = onFavoriteClick, modifier = Modifier.size(28.dp)) {
+                        Icon(
+                            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                            contentDescription = "Favorito",
+                            tint = if (isFavorite) Color(0xFFE53935) else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
                 Text(
-                    text = item.description,
+                    text = item.category.prettyName(),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 8.dp)
+                    modifier = Modifier.padding(top = 4.dp)
                 )
+                Text(
+                    text = "por ${item.ownerDisplayName()}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Surface(
+                    shape = RoundedCornerShape(999.dp),
+                    color = statusColor.copy(alpha = 0.14f),
+                    modifier = Modifier.padding(top = 6.dp)
+                ) {
+                    Text(
+                        text = statusLabel,
+                        color = statusColor,
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                }
             }
         }
     }
 }
 
-@Composable
-private fun HomeChip(text: String) {
-    Surface(
-        shape = RoundedCornerShape(999.dp),
-        color = MarfilVariant,
-        modifier = Modifier.border(1.dp, Color.White, RoundedCornerShape(999.dp))
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.labelLarge,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
-        )
+private fun com.market.trameo.domain.model.ObjectCategory.prettyName(): String = when (this) {
+    com.market.trameo.domain.model.ObjectCategory.TECNOLOGIA -> "Tecnologia"
+    com.market.trameo.domain.model.ObjectCategory.LIBROS -> "Libros"
+    com.market.trameo.domain.model.ObjectCategory.ROPA -> "Ropa"
+    com.market.trameo.domain.model.ObjectCategory.HOGAR -> "Hogar"
+    com.market.trameo.domain.model.ObjectCategory.DEPORTES -> "Deportes"
+}
+
+private fun com.market.trameo.domain.model.ObjectCondition.prettyName(): String = when (this) {
+    com.market.trameo.domain.model.ObjectCondition.NUEVO -> "Nuevo"
+    com.market.trameo.domain.model.ObjectCondition.COMO_NUEVO -> "Como nuevo"
+    com.market.trameo.domain.model.ObjectCondition.BUENO -> "Bueno"
+    com.market.trameo.domain.model.ObjectCondition.REGULAR -> "Regular"
+}
+
+private fun SwapObject.ownerDisplayName(): String = when (ownerId) {
+    "seed-user-1" -> "Santiago"
+    else -> ownerId
+}
+
+private fun String.compactTitle(): String {
+    return if (length > 9) {
+        take(7) + "..."
+    } else {
+        this
     }
 }

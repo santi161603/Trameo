@@ -3,6 +3,7 @@ package com.market.trameo.features.login
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.market.trameo.core.session.SessionDataStore
 import com.market.trameo.core.utils.RequestResult
 import com.market.trameo.core.utils.ValidatedField
 import com.market.trameo.domain.repository.UserRepository
@@ -15,7 +16,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val sessionDataStore: SessionDataStore
 ) : ViewModel() {
 
     val email = ValidatedField("") { value ->
@@ -61,6 +63,7 @@ class LoginViewModel @Inject constructor(
                 )
             }.onSuccess { user ->
                 _loginResult.value = if (user != null) {
+                    sessionDataStore.updateUserId(user.id)
                     RequestResult.Success("Bienvenido, ${user.name}")
                 } else {
                     RequestResult.Failure("Credenciales invalidas")

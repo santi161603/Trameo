@@ -1,11 +1,16 @@
 package com.market.trameo.features.register
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -36,12 +41,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil3.compose.AsyncImage
 import com.market.trameo.core.utils.RequestResult
 import com.market.trameo.core.theme.Marfil
 import com.market.trameo.core.theme.Terracota
@@ -54,9 +61,15 @@ fun RegisterScreen(
 ) {
     val registerResult by viewModel.registerResult.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val profilePhotoUri by viewModel.profilePhotoUri.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        viewModel.onProfilePhotoSelected(uri)
+    }
     LaunchedEffect(registerResult) {
         registerResult?.let { result ->
             val message = when (result) {
@@ -93,6 +106,24 @@ fun RegisterScreen(
             )
 
             Spacer(modifier = Modifier.height(12.dp))
+
+            AsyncImage(
+                model = profilePhotoUri,
+                contentDescription = "Foto de perfil",
+                modifier = Modifier
+                    .size(84.dp)
+                    .clip(CircleShape)
+                    .border(1.dp, Terracota, CircleShape)
+            )
+
+            Button(
+                onClick = { photoPickerLauncher.launch("image/*") },
+                enabled = !isLoading,
+                colors = ButtonDefaults.buttonColors(containerColor = Terracota),
+                modifier = Modifier.padding(top = 8.dp, bottom = 12.dp)
+            ) {
+                Text("Agregar foto de perfil")
+            }
 
             RegisterField(
                 value = viewModel.name.value,

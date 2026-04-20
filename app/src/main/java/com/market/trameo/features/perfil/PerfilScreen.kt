@@ -32,6 +32,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +43,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -50,6 +53,7 @@ import com.market.trameo.core.component.TrameoBottomNavigation
 import com.market.trameo.core.navigation.Routes
 import com.market.trameo.core.theme.Marfil
 import com.market.trameo.core.theme.Terracota
+import com.market.trameo.domain.model.User
 
 @Composable
 fun PerfilScreen(
@@ -57,8 +61,11 @@ fun PerfilScreen(
     onTruequesClick: () -> Unit,
     onMisObjetosClick: () -> Unit,
     onPublicarClick: () -> Unit = {},
-    onChatsClick: () -> Unit = {}
+    onChatsClick: () -> Unit = {},
+    viewModel: PerfilViewModel = hiltViewModel()
 ) {
+    val currentUser by viewModel.currentUser.collectAsState()
+
     Scaffold(
         containerColor = Marfil,
         bottomBar = {
@@ -92,7 +99,7 @@ fun PerfilScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             item {
-                ProfileHeader()
+                ProfileHeader(currentUser = currentUser)
                 Spacer(modifier = Modifier.height(14.dp))
                 StatsRow()
                 Spacer(modifier = Modifier.height(8.dp))
@@ -123,7 +130,7 @@ fun PerfilScreen(
 }
 
 @Composable
-private fun ProfileHeader() {
+private fun ProfileHeader(currentUser: User?) {
     val context = LocalContext.current
 
     Card(
@@ -135,7 +142,7 @@ private fun ProfileHeader() {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 AsyncImage(
                     model = ImageRequest.Builder(context)
-                        .data("https://picsum.photos/seed/trameo-perfil/300/300")
+                        .data(currentUser?.profilePhotoUri ?: "https://picsum.photos/seed/trameo-perfil/300/300")
                         .crossfade(true)
                         .build(),
                     contentDescription = "Avatar perfil",
@@ -150,12 +157,12 @@ private fun ProfileHeader() {
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
-                        text = "Santiago P.",
+                        text = currentUser?.name ?: "Santiago P.",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Medellin, Colombia",
+                        text = currentUser?.city?.let { "$it, Colombia" } ?: "Medellin, Colombia",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

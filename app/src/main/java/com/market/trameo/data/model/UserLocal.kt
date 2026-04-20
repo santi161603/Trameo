@@ -5,8 +5,11 @@ package com.market.trameo.data.model
  */
 data class UserLocal(
     val id: String,
+    val name: String,
     val email: String,
     val password: String,
-    val displayName: String
+    val city: String,
+    val address: String,
+    val phoneNumber: String,
+    val profilePhotoUri: String?
 )
-

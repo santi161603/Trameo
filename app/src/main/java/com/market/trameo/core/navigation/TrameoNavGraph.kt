@@ -42,7 +42,7 @@ object Routes {
     const val VERIFY_CODE = "verify_code"
     const val RESET_PASSWORD = "reset_password"
 
-    fun detalleObjetoRoute(id: Int): String = "$DETALLE_OBJETO/$id"
+    fun detalleObjetoRoute(id: String): String = "$DETALLE_OBJETO/$id"
     fun proponerIntercambioRoute(id: Int): String = "$PROPONER_INTERCAMBIO/$id"
     fun chatConversacionRoute(chatId: Int): String = "$CHAT_CONVERSACION/$chatId"
 }
@@ -148,14 +148,14 @@ fun TrameoNavGraph() {
 
         composable(
             route = "${Routes.DETALLE_OBJETO}/{id}",
-            arguments = listOf(navArgument("id") { type = NavType.IntType })
+            arguments = listOf(navArgument("id") { type = NavType.StringType })
         ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getInt("id") ?: -1
+            val id = backStackEntry.arguments?.getString("id") ?: ""
             DetalleObjetoScreen(
                 objectId = id,
                 onBackClick = { navController.popBackStack() },
                 onProponerIntercambioClick = { objectId ->
-                    navController.navigate(Routes.proponerIntercambioRoute(objectId)) {
+                    navController.navigate(Routes.proponerIntercambioRoute(objectId.hashCode())) {
                         launchSingleTop = true
                     }
                 }
@@ -247,6 +247,11 @@ fun TrameoNavGraph() {
                 },
                 onPublicarClick = {
                     navController.navigate(Routes.PUBLICAR) {
+                        launchSingleTop = true
+                    }
+                },
+                onObjectClick = { id ->
+                    navController.navigate(Routes.detalleObjetoRoute(id)) {
                         launchSingleTop = true
                     }
                 }

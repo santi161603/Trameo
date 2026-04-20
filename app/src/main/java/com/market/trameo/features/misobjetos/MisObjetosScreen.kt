@@ -1,6 +1,7 @@
 package com.market.trameo.features.misobjetos
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -29,6 +30,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,6 +40,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -47,27 +51,19 @@ import com.market.trameo.core.navigation.Routes
 import com.market.trameo.core.theme.Marfil
 import com.market.trameo.core.theme.MarfilVariant
 import com.market.trameo.core.theme.Terracota
-
-private data class MiObjetoItem(
-    val id: Int,
-    val title: String,
-    val estado: String,
-    val puntos: Int,
-    val imageUrl: String
-)
+import com.market.trameo.domain.model.ModerationStatus
+import com.market.trameo.domain.model.SwapObject
 
 @Composable
 fun MisObjetosScreen(
     onHomeClick: () -> Unit,
     onTruequesClick: () -> Unit,
     onPerfilClick: () -> Unit,
-    onPublicarClick: () -> Unit = {}
+    onObjectClick: (String) -> Unit,
+    onPublicarClick: () -> Unit = {},
+    viewModel: MyObjectsViewModel = hiltViewModel()
 ) {
-    val items = listOf(
-        MiObjetoItem(1, "Bicicleta urbana", "Publicado", 120, "https://picsum.photos/seed/objeto-1/700/420"),
-        MiObjetoItem(2, "Licuadora 2L", "En trueque", 80, "https://picsum.photos/seed/objeto-2/700/420"),
-        MiObjetoItem(3, "Guitarra acustica", "Pausado", 150, "https://picsum.photos/seed/objeto-3/700/420")
-    )
+    val items by viewModel.items.collectAsState()
 
     Scaffold(
         containerColor = Marfil,
@@ -116,14 +112,13 @@ fun MisObjetosScreen(
                 SearchFakeField()
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    EstadoChip("Todos", true)
-                    EstadoChip("Publicados", false)
-                    EstadoChip("En trueque", false)
+                    EstadoChip("Pendiente de Verificacion", false)
+                    EstadoChip("Publicado", true)
                 }
             }
 
             items(items, key = { it.id }) { item ->
-                MiObjetoCard(item)
+                MiObjetoCard(item = item, onClick = { onObjectClick(item.id) })
             }
         }
     }
@@ -170,15 +165,23 @@ private fun EstadoChip(text: String, selected: Boolean) {
 }
 
 @Composable
-private fun MiObjetoCard(item: MiObjetoItem) {
-    val statusColor = when (item.estado) {
-        "Publicado" -> Color(0xFF3F8E4E)
-        "En trueque" -> Color(0xFFD38A1F)
-        else -> MaterialTheme.colorScheme.onSurfaceVariant
+private fun MiObjetoCard(item: SwapObject, onClick: () -> Unit) {
+    val statusLabel = if (item.moderationStatus == ModerationStatus.PUBLICADO) {
+        "Publicado"
+    } else {
+        "Pendiente de Verificacion"
+    }
+
+    val statusColor = if (item.moderationStatus == ModerationStatus.PUBLICADO) {
+        Color(0xFF3F8E4E)
+    } else {
+        Color(0xFFD38A1F)
     }
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         shape = RoundedCornerShape(18.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -187,10 +190,10 @@ private fun MiObjetoCard(item: MiObjetoItem) {
         Column {
             AsyncImage(
                 model = ImageRequest.Builder(context)
-                    .data(item.imageUrl)
+                    .data(item.photos.firstOrNull())
                     .crossfade(true)
                     .build(),
-                contentDescription = item.title,
+                contentDescription = item.name,
                 placeholder = painterResource(id = R.drawable.ic_launcher_background),
                 error = painterResource(id = R.drawable.ic_launcher_foreground),
                 modifier = Modifier
@@ -208,18 +211,18 @@ private fun MiObjetoCard(item: MiObjetoItem) {
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = item.title,
+                        text = item.name,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = "${item.puntos} pts",
+                        text = item.category.prettyName(),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 Text(
-                    text = item.estado,
+                    text = statusLabel,
                     color = statusColor,
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold
@@ -227,4 +230,12 @@ private fun MiObjetoCard(item: MiObjetoItem) {
             }
         }
     }
+}
+
+private fun com.market.trameo.domain.model.ObjectCategory.prettyName(): String = when (this) {
+    com.market.trameo.domain.model.ObjectCategory.TECNOLOGIA -> "Tecnologia"
+    com.market.trameo.domain.model.ObjectCategory.LIBROS -> "Libros"
+    com.market.trameo.domain.model.ObjectCategory.ROPA -> "Ropa"
+    com.market.trameo.domain.model.ObjectCategory.HOGAR -> "Hogar"
+    com.market.trameo.domain.model.ObjectCategory.DEPORTES -> "Deportes"
 }
