@@ -22,9 +22,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.market.trameo.R
 import com.market.trameo.core.utils.RequestResult
 import kotlinx.coroutines.delay
 
@@ -62,19 +64,19 @@ fun VerifyCodeScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Ingresar código",
+                text = stringResource(id = R.string.verify_title),
                 style = MaterialTheme.typography.headlineSmall
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Código quemado para pruebas: 123456",
+                text = stringResource(id = R.string.verify_hint_code),
                 style = MaterialTheme.typography.bodyMedium
             )
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
                 value = viewModel.code.value,
                 onValueChange = { viewModel.code.onChange(it) },
-                label = { Text("Código") },
+                label = { Text(stringResource(id = R.string.verify_field_label)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true,
                 isError = viewModel.code.error != null,
@@ -88,7 +90,7 @@ fun VerifyCodeScreen(
                 enabled = viewModel.isFormValid,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Validar código")
+                Text(stringResource(id = R.string.verify_button))
             }
         }
     }

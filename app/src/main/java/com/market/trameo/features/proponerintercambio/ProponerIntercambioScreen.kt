@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -69,10 +70,10 @@ fun ProponerIntercambioScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBackClick) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(id = R.string.common_back))
                 }
                 Text(
-                    text = "Proponer intercambio",
+                    text = stringResource(id = R.string.proponer_title),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -90,7 +91,7 @@ fun ProponerIntercambioScreen(
             item {
                 if (targetObject != null) {
                     Text(
-                        text = "Objeto que quieres",
+                        text = stringResource(id = R.string.proponer_target_section),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -100,7 +101,7 @@ fun ProponerIntercambioScreen(
 
             item {
                 Text(
-                    text = "Selecciona uno de tus objetos",
+                    text = stringResource(id = R.string.proponer_my_objects_section),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -118,8 +119,8 @@ fun ProponerIntercambioScreen(
                 OutlinedTextField(
                     value = "",
                     onValueChange = {},
-                    label = { Text("Mensaje") },
-                    placeholder = { Text("Escribe una propuesta corta") },
+                    label = { Text(stringResource(id = R.string.proponer_message_label)) },
+                    placeholder = { Text(stringResource(id = R.string.proponer_message_placeholder)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(110.dp),
@@ -135,7 +136,7 @@ fun ProponerIntercambioScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = Terracota),
                     shape = RoundedCornerShape(14.dp)
                 ) {
-                    Text("Enviar propuesta")
+                    Text(stringResource(id = R.string.proponer_send_button))
                 }
             }
         }
@@ -178,7 +179,11 @@ private fun ObjectSummaryCard(item: HomeObjectItem) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            Text("${item.points} pts", color = Terracota, fontWeight = FontWeight.Bold)
+            Text(
+                text = stringResource(id = R.string.common_points_format, item.points),
+                color = Terracota,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }
@@ -232,7 +237,11 @@ private fun SelectableObjectCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                Text("${item.points} pts", color = Terracota, fontWeight = FontWeight.Bold)
+                Text(
+                    text = stringResource(id = R.string.common_points_format, item.points),
+                    color = Terracota,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }

@@ -56,19 +56,18 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             _loginResult.value = null
-            runCatching {
-                userRepository.login(
+            try {
+                val user = userRepository.login(
                     email = email.value.trim(),
                     password = password.value
                 )
-            }.onSuccess { user ->
                 _loginResult.value = if (user != null) {
                     sessionDataStore.updateUserId(user.id)
                     RequestResult.Success("Bienvenido, ${user.name}")
                 } else {
                     RequestResult.Failure("Credenciales invalidas")
                 }
-            }.onFailure { error ->
+            } catch (error: Exception) {
                 _loginResult.value = RequestResult.Failure(error.message ?: "Error inesperado")
             }
             _isLoading.value = false

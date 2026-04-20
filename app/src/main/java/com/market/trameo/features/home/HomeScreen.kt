@@ -58,6 +58,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -99,27 +100,27 @@ fun HomeScreen(
                 items = listOf(
                     BottomNavItem(
                         route = Routes.HOME,
-                        title = "Home",
+                        title = stringResource(id = R.string.home_bottom_home),
                         icon = Icons.Default.Home,
-                        contentDescription = "Home"
+                        contentDescription = stringResource(id = R.string.home_bottom_home)
                     ),
                     BottomNavItem(
                         route = Routes.MIS_OBJETOS,
-                        title = "Mis objetos",
+                        title = stringResource(id = R.string.home_bottom_mis_objetos),
                         icon = Icons.AutoMirrored.Filled.List,
-                        contentDescription = "Mis objetos"
+                        contentDescription = stringResource(id = R.string.home_bottom_mis_objetos)
                     ),
                     BottomNavItem(
                         route = Routes.TRUEQUES,
-                        title = "Trueques",
+                        title = stringResource(id = R.string.home_bottom_trueques),
                         icon = Icons.Default.Autorenew,
-                        contentDescription = "Trueques"
+                        contentDescription = stringResource(id = R.string.home_bottom_trueques)
                     ),
                     BottomNavItem(
                         route = Routes.PERFIL,
-                        title = "Perfil",
+                        title = stringResource(id = R.string.home_bottom_perfil),
                         icon = Icons.Default.Person,
-                        contentDescription = "Perfil"
+                        contentDescription = stringResource(id = R.string.home_bottom_perfil)
                     )
                 ),
                 currentRoute = Routes.HOME,
@@ -136,7 +137,7 @@ fun HomeScreen(
                 },
                 onCenterClick = onPublicarClick,
                 centerIcon = Icons.Default.Add,
-                centerContentDescription = "Publicar"
+                centerContentDescription = stringResource(id = R.string.home_bottom_publicar)
             )
         }
     ) { padding ->
@@ -201,7 +202,7 @@ private fun HomeContent(
                 HomeBanner(onClick = onMapaClick)
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Objetos cerca de ti",
+                    text = stringResource(id = R.string.home_nearby_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -227,7 +228,7 @@ private fun HomeContent(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "Aun no hay objetos para mostrar.",
+                        text = stringResource(id = R.string.home_empty),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(16.dp)
@@ -253,7 +254,7 @@ private fun HomeHeader(
                 .data(currentUser?.profilePhotoUri ?: "https://picsum.photos/seed/trameo-profile/200/200")
                 .crossfade(true)
                 .build(),
-            contentDescription = "Perfil",
+            contentDescription = stringResource(id = R.string.home_profile_content_description),
             placeholder = painterResource(id = R.drawable.ic_launcher_background),
             error = painterResource(id = R.drawable.ic_launcher_foreground),
             modifier = Modifier
@@ -267,12 +268,15 @@ private fun HomeHeader(
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = "Hola, ${currentUser?.name ?: "Santiago"}",
+                text = stringResource(
+                    id = R.string.home_greeting,
+                    currentUser?.name ?: stringResource(id = R.string.home_default_name)
+                ),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "Encuentra objetos para intercambiar",
+                text = stringResource(id = R.string.home_subtitle),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -282,13 +286,13 @@ private fun HomeHeader(
             IconButton(onClick = {}) {
                 Icon(
                     imageVector = Icons.Default.NotificationsNone,
-                    contentDescription = "Notificaciones"
+                    contentDescription = stringResource(id = R.string.home_notifications)
                 )
             }
             IconButton(onClick = onChatsClick) {
                 Icon(
                     imageVector = Icons.Outlined.ChatBubbleOutline,
-                    contentDescription = "Chats"
+                    contentDescription = stringResource(id = R.string.home_chats)
                 )
             }
         }
@@ -303,8 +307,8 @@ private fun HomeSearchBox(
     OutlinedTextField(
         value = query,
         onValueChange = onQueryChange,
-        label = { Text("Buscar por nombre o categoria") },
-        leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = "Buscar") },
+        label = { Text(stringResource(id = R.string.home_search_label)) },
+        leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = stringResource(id = R.string.home_search_content_description)) },
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         singleLine = true
@@ -326,7 +330,8 @@ private fun CategoryFilterRow(
                 onClick = { onCategoryChange(category) },
                 label = {
                     Text(
-                        text = category?.prettyName() ?: "Todos"
+                        text = category?.let { stringResource(id = it.labelRes()) }
+                            ?: stringResource(id = R.string.home_category_all)
                     )
                 }
             )
@@ -351,7 +356,7 @@ private fun HomeBanner(onClick: () -> Unit) {
                     .data("https://picsum.photos/seed/trameo-home-banner/1000/600")
                     .crossfade(true)
                     .build(),
-                contentDescription = "Banner",
+                contentDescription = stringResource(id = R.string.home_banner_content_description),
                 placeholder = painterResource(id = R.drawable.ic_launcher_background),
                 error = painterResource(id = R.drawable.ic_launcher_foreground),
                 modifier = Modifier.fillMaxSize(),
@@ -371,13 +376,13 @@ private fun HomeBanner(onClick: () -> Unit) {
                     .padding(14.dp)
             ) {
                 Text(
-                    text = "Cliquea aqui para encontrar trueques cerca de ti",
+                    text = stringResource(id = R.string.home_banner_title),
                     color = Color.White,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Toca para ver el mapa de tradeos cercanos",
+                    text = stringResource(id = R.string.home_banner_subtitle),
                     color = Color.White.copy(alpha = 0.9f),
                     style = MaterialTheme.typography.bodySmall
                 )
@@ -394,8 +399,8 @@ private fun HomeObjectCard(
     onClick: () -> Unit
 ) {
     val statusLabel = when (item.moderationStatus) {
-        ModerationStatus.PUBLICADO -> "Publicado"
-        ModerationStatus.PENDIENTE_VERIFICACION -> "Pendiente"
+        ModerationStatus.PUBLICADO -> stringResource(id = R.string.common_status_publicado)
+        ModerationStatus.PENDIENTE_VERIFICACION -> stringResource(id = R.string.common_status_pendiente)
     }
 
     val statusColor = when (item.moderationStatus) {
@@ -443,7 +448,7 @@ private fun HomeObjectCard(
                         .align(Alignment.TopStart)
                 ) {
                     Text(
-                        text = item.condition.prettyName(),
+                        text = stringResource(id = item.condition.labelRes()),
                         color = Color.White,
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
@@ -464,19 +469,19 @@ private fun HomeObjectCard(
                     IconButton(onClick = onFavoriteClick, modifier = Modifier.size(28.dp)) {
                         Icon(
                             imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                            contentDescription = "Favorito",
+                            contentDescription = stringResource(id = R.string.home_favorite),
                             tint = if (isFavorite) Color(0xFFE53935) else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
                 Text(
-                    text = item.category.prettyName(),
+                    text = stringResource(id = item.category.labelRes()),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 4.dp)
                 )
                 Text(
-                    text = "por ${item.ownerDisplayName()}",
+                    text = stringResource(id = R.string.home_by_owner, item.ownerDisplayName()),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -498,19 +503,19 @@ private fun HomeObjectCard(
     }
 }
 
-private fun com.market.trameo.domain.model.ObjectCategory.prettyName(): String = when (this) {
-    com.market.trameo.domain.model.ObjectCategory.TECNOLOGIA -> "Tecnologia"
-    com.market.trameo.domain.model.ObjectCategory.LIBROS -> "Libros"
-    com.market.trameo.domain.model.ObjectCategory.ROPA -> "Ropa"
-    com.market.trameo.domain.model.ObjectCategory.HOGAR -> "Hogar"
-    com.market.trameo.domain.model.ObjectCategory.DEPORTES -> "Deportes"
+private fun com.market.trameo.domain.model.ObjectCategory.labelRes(): Int = when (this) {
+    com.market.trameo.domain.model.ObjectCategory.TECNOLOGIA -> R.string.object_category_tecnologia
+    com.market.trameo.domain.model.ObjectCategory.LIBROS -> R.string.object_category_libros
+    com.market.trameo.domain.model.ObjectCategory.ROPA -> R.string.object_category_ropa
+    com.market.trameo.domain.model.ObjectCategory.HOGAR -> R.string.object_category_hogar
+    com.market.trameo.domain.model.ObjectCategory.DEPORTES -> R.string.object_category_deportes
 }
 
-private fun com.market.trameo.domain.model.ObjectCondition.prettyName(): String = when (this) {
-    com.market.trameo.domain.model.ObjectCondition.NUEVO -> "Nuevo"
-    com.market.trameo.domain.model.ObjectCondition.COMO_NUEVO -> "Como nuevo"
-    com.market.trameo.domain.model.ObjectCondition.BUENO -> "Bueno"
-    com.market.trameo.domain.model.ObjectCondition.REGULAR -> "Regular"
+private fun com.market.trameo.domain.model.ObjectCondition.labelRes(): Int = when (this) {
+    com.market.trameo.domain.model.ObjectCondition.NUEVO -> R.string.object_condition_nuevo
+    com.market.trameo.domain.model.ObjectCondition.COMO_NUEVO -> R.string.object_condition_como_nuevo
+    com.market.trameo.domain.model.ObjectCondition.BUENO -> R.string.object_condition_bueno
+    com.market.trameo.domain.model.ObjectCondition.REGULAR -> R.string.object_condition_regular
 }
 
 private fun SwapObject.ownerDisplayName(): String = when (ownerId) {

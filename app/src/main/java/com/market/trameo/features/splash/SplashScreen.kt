@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -97,7 +98,7 @@ fun SplashScreen(
             ) {
                 Image(
                     painter = painterResource(id = R.mipmap.ic_launcher_foreground),
-                    contentDescription = "Logo Trameo",
+                    contentDescription = stringResource(id = R.string.splash_logo_content_description),
                     modifier = Modifier.size(88.dp)
                 )
             }
@@ -105,7 +106,7 @@ fun SplashScreen(
             Spacer(modifier = Modifier.height(26.dp))
 
             Text(
-                text = "Trameo",
+                text = stringResource(id = R.string.splash_title),
                 color = Marfil,
                 fontSize = 42.sp,
                 fontWeight = FontWeight.Bold,
@@ -115,7 +116,7 @@ fun SplashScreen(
             Spacer(modifier = Modifier.height(10.dp))
 
             Text(
-                text = "Intercambia lo que tienes por lo que necesitas",
+                text = stringResource(id = R.string.splash_subtitle),
                 color = Marfil.copy(alpha = 0.85f),
                 fontSize = 14.sp,
                 textAlign = TextAlign.Center,
@@ -142,7 +143,7 @@ fun SplashScreen(
         }
 
         Text(
-            text = "Red de trueque comunitario",
+            text = stringResource(id = R.string.splash_footer),
             color = Marfil.copy(alpha = 0.55f),
             fontSize = 12.sp,
             modifier = Modifier

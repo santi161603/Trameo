@@ -57,10 +57,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import coil3.compose.AsyncImage
+import com.market.trameo.R
 import com.market.trameo.core.theme.Marfil
 import com.market.trameo.core.theme.Terracota
 import com.market.trameo.core.utils.RequestResult
@@ -138,10 +140,10 @@ fun CreateObjectScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBackClick) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(id = R.string.common_back))
                 }
                 Text(
-                    text = "Crear objeto de trueque",
+                    text = stringResource(id = R.string.create_object_title),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -158,7 +160,7 @@ fun CreateObjectScreen(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Text(
-                text = "Sube hasta 5 fotos y completa la informacion del objeto.",
+                text = stringResource(id = R.string.create_object_description),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -171,12 +173,12 @@ fun CreateObjectScreen(
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         AsyncImage(
                             model = uri,
-                            contentDescription = "Foto del objeto",
+                            contentDescription = stringResource(id = R.string.create_object_photo_content_description),
                             modifier = Modifier.size(86.dp),
                             contentScale = ContentScale.Crop
                         )
                         IconButton(onClick = { viewModel.removePhoto(uri) }) {
-                            Icon(Icons.Default.Delete, contentDescription = "Eliminar foto")
+                            Icon(Icons.Default.Delete, contentDescription = stringResource(id = R.string.create_object_delete_photo))
                         }
                     }
                 }
@@ -197,7 +199,7 @@ fun CreateObjectScreen(
                 ) {
                     Icon(Icons.Default.PhotoLibrary, contentDescription = null)
                     Spacer(modifier = Modifier.size(6.dp))
-                    Text("Galeria")
+                    Text(stringResource(id = R.string.create_object_gallery))
                 }
 
                 Button(
@@ -213,14 +215,14 @@ fun CreateObjectScreen(
                 ) {
                     Icon(Icons.Default.CameraAlt, contentDescription = null)
                     Spacer(modifier = Modifier.size(6.dp))
-                    Text("Camara")
+                    Text(stringResource(id = R.string.create_object_camera))
                 }
             }
 
             OutlinedTextField(
                 value = viewModel.name.value,
                 onValueChange = viewModel.name::onChange,
-                label = { Text("Nombre") },
+                label = { Text(stringResource(id = R.string.create_object_name)) },
                 supportingText = viewModel.name.error?.let { { Text(it) } },
                 isError = viewModel.name.error != null,
                 modifier = Modifier.fillMaxWidth()
@@ -229,7 +231,7 @@ fun CreateObjectScreen(
             OutlinedTextField(
                 value = viewModel.description.value,
                 onValueChange = viewModel.description::onChange,
-                label = { Text("Descripcion") },
+                label = { Text(stringResource(id = R.string.create_object_description_label)) },
                 supportingText = viewModel.description.error?.let { { Text(it) } },
                 isError = viewModel.description.error != null,
                 minLines = 3,
@@ -242,7 +244,7 @@ fun CreateObjectScreen(
                 error = viewModel.category.error
             )
 
-            Text(text = "Estado del objeto", style = MaterialTheme.typography.titleMedium)
+            Text(text = stringResource(id = R.string.create_object_condition_title), style = MaterialTheme.typography.titleMedium)
             LazyRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -252,7 +254,7 @@ fun CreateObjectScreen(
                     FilterChip(
                         selected = viewModel.condition.value == condition,
                         onClick = { viewModel.condition.onChange(condition) },
-                        label = { Text(condition.prettyName()) }
+                        label = { Text(stringResource(id = condition.labelRes())) }
                     )
                 }
             }
@@ -263,7 +265,7 @@ fun CreateObjectScreen(
             OutlinedTextField(
                 value = viewModel.exchangePreferences.value,
                 onValueChange = viewModel.exchangePreferences::onChange,
-                label = { Text("Que te gustaria a cambio") },
+                label = { Text(stringResource(id = R.string.create_object_exchange_preferences)) },
                 supportingText = viewModel.exchangePreferences.error?.let { { Text(it) } },
                 isError = viewModel.exchangePreferences.error != null,
                 minLines = 2,
@@ -279,7 +281,7 @@ fun CreateObjectScreen(
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Terracota)
             ) {
-                Text("Publicar objeto")
+                Text(stringResource(id = R.string.create_object_publish))
             }
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -301,13 +303,13 @@ private fun CategoryDropdown(
         onExpandedChange = { expanded = !expanded }
     ) {
         OutlinedTextField(
-            value = value?.prettyName() ?: "",
+            value = value?.let { stringResource(id = it.labelRes()) } ?: "",
             onValueChange = {},
             readOnly = true,
             modifier = Modifier
                 .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
                 .fillMaxWidth(),
-            label = { Text("Categoria") },
+            label = { Text(stringResource(id = R.string.create_object_category_label)) },
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
             },
@@ -321,7 +323,7 @@ private fun CategoryDropdown(
         ) {
             ObjectCategory.entries.forEach { category ->
                 DropdownMenuItem(
-                    text = { Text(category.prettyName()) },
+                    text = { Text(stringResource(id = category.labelRes())) },
                     onClick = {
                         onSelect(category)
                         expanded = false
@@ -332,19 +334,19 @@ private fun CategoryDropdown(
     }
 }
 
-private fun ObjectCategory.prettyName(): String = when (this) {
-    ObjectCategory.TECNOLOGIA -> "Tecnologia"
-    ObjectCategory.LIBROS -> "Libros"
-    ObjectCategory.ROPA -> "Ropa"
-    ObjectCategory.HOGAR -> "Hogar"
-    ObjectCategory.DEPORTES -> "Deportes"
+private fun ObjectCategory.labelRes(): Int = when (this) {
+    ObjectCategory.TECNOLOGIA -> R.string.object_category_tecnologia
+    ObjectCategory.LIBROS -> R.string.object_category_libros
+    ObjectCategory.ROPA -> R.string.object_category_ropa
+    ObjectCategory.HOGAR -> R.string.object_category_hogar
+    ObjectCategory.DEPORTES -> R.string.object_category_deportes
 }
 
-private fun ObjectCondition.prettyName(): String = when (this) {
-    ObjectCondition.NUEVO -> "Nuevo"
-    ObjectCondition.COMO_NUEVO -> "Como nuevo"
-    ObjectCondition.BUENO -> "Bueno"
-    ObjectCondition.REGULAR -> "Regular"
+private fun ObjectCondition.labelRes(): Int = when (this) {
+    ObjectCondition.NUEVO -> R.string.object_condition_nuevo
+    ObjectCondition.COMO_NUEVO -> R.string.object_condition_como_nuevo
+    ObjectCondition.BUENO -> R.string.object_condition_bueno
+    ObjectCondition.REGULAR -> R.string.object_condition_regular
 }
 
 private fun galleryPermissionForCurrentSdk(): String? {

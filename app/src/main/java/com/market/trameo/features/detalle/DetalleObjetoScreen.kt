@@ -45,6 +45,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -124,7 +125,7 @@ fun DetalleObjetoScreen(
                     color = DetalleColors.MainText
                 )
                 Spacer(modifier = Modifier.height(12.dp))
-                Button(onClick = onBackClick) { Text("Volver") }
+                Button(onClick = onBackClick) { Text(stringResource(id = R.string.common_back)) }
             }
         }
         return
@@ -167,7 +168,7 @@ private fun DetalleObjetoContent(
                 IconButton(onClick = onBack) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                        contentDescription = "Volver",
+                        contentDescription = stringResource(id = R.string.common_back),
                         tint = DetalleColors.MainText
                     )
                 }
@@ -225,14 +226,14 @@ private fun DetalleObjetoContent(
 
             item {
                 SectionCard(
-                    title = "Descripcion",
+                    title = stringResource(id = R.string.detalle_descripcion),
                     body = objeto.descripcion
                 )
             }
 
             item {
                 SectionCard(
-                    title = "Busco a cambio",
+                    title = stringResource(id = R.string.detalle_busco_cambio),
                     body = objeto.buscaIntercambio
                 )
             }
@@ -254,7 +255,7 @@ private fun DetalleObjetoContent(
                     colors = ButtonDefaults.buttonColors(containerColor = DetalleColors.Accent)
                 ) {
                     Text(
-                        text = "Proponer intercambio",
+                        text = stringResource(id = R.string.proponer_title),
                         color = DetalleColors.White,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -282,7 +283,7 @@ private fun ImageCarousel(imageUrls: List<String>) {
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Image,
-                    contentDescription = "Sin imagen",
+                    contentDescription = stringResource(id = R.string.detalle_sin_imagen),
                     tint = DetalleColors.MainText.copy(alpha = 0.45f),
                     modifier = Modifier.size(60.dp)
                 )
@@ -307,7 +308,7 @@ private fun ImageCarousel(imageUrls: List<String>) {
             ) { page ->
                 AsyncImage(
                     model = imageUrls[page],
-                    contentDescription = "Imagen ${page + 1}",
+                    contentDescription = stringResource(id = R.string.detalle_imagen_index, page + 1),
                     placeholder = painterResource(id = R.drawable.ic_launcher_background),
                     error = painterResource(id = R.drawable.ic_launcher_foreground),
                     modifier = Modifier.fillMaxSize(),
@@ -405,7 +406,7 @@ private fun PublisherCard(
         ) {
             AsyncImage(
                 model = avatarUrl,
-                contentDescription = "Foto publicador",
+                contentDescription = stringResource(id = R.string.detalle_foto_publicador),
                 placeholder = painterResource(id = R.drawable.ic_launcher_background),
                 error = painterResource(id = R.drawable.ic_launcher_foreground),
                 modifier = Modifier
@@ -416,7 +417,7 @@ private fun PublisherCard(
             Spacer(modifier = Modifier.width(10.dp))
             Column {
                 Text(
-                    text = "Publicado por",
+                    text = stringResource(id = R.string.detalle_publicado_por),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

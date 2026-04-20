@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -70,10 +71,10 @@ fun MisObjetosScreen(
         bottomBar = {
             TrameoBottomNavigation(
                 items = listOf(
-                    BottomNavItem(Routes.HOME, "Home", Icons.Default.Home, "Home"),
-                    BottomNavItem(Routes.MIS_OBJETOS, "Mis objetos", Icons.AutoMirrored.Filled.List, "Mis objetos"),
-                    BottomNavItem(Routes.TRUEQUES, "Trueques", Icons.Default.Autorenew, "Trueques"),
-                    BottomNavItem(Routes.PERFIL, "Perfil", Icons.Default.Person, "Perfil")
+                    BottomNavItem(Routes.HOME, stringResource(id = R.string.home_bottom_home), Icons.Default.Home, stringResource(id = R.string.home_bottom_home)),
+                    BottomNavItem(Routes.MIS_OBJETOS, stringResource(id = R.string.home_bottom_mis_objetos), Icons.AutoMirrored.Filled.List, stringResource(id = R.string.home_bottom_mis_objetos)),
+                    BottomNavItem(Routes.TRUEQUES, stringResource(id = R.string.home_bottom_trueques), Icons.Default.Autorenew, stringResource(id = R.string.home_bottom_trueques)),
+                    BottomNavItem(Routes.PERFIL, stringResource(id = R.string.home_bottom_perfil), Icons.Default.Person, stringResource(id = R.string.home_bottom_perfil))
                 ),
                 currentRoute = Routes.MIS_OBJETOS,
                 onItemClick = { item ->
@@ -85,7 +86,7 @@ fun MisObjetosScreen(
                 },
                 onCenterClick = onPublicarClick,
                 centerIcon = Icons.Default.Add,
-                centerContentDescription = "Publicar"
+                centerContentDescription = stringResource(id = R.string.home_bottom_publicar)
             )
         }
     ) { padding ->
@@ -99,12 +100,12 @@ fun MisObjetosScreen(
         ) {
             item {
                 Text(
-                    text = "Mis objetos",
+                    text = stringResource(id = R.string.mis_objetos_title),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Administra tus publicaciones",
+                    text = stringResource(id = R.string.mis_objetos_subtitle),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -112,8 +113,8 @@ fun MisObjetosScreen(
                 SearchFakeField()
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    EstadoChip("Pendiente de Verificacion", false)
-                    EstadoChip("Publicado", true)
+                    EstadoChip(stringResource(id = R.string.common_status_pendiente_verificacion), false)
+                    EstadoChip(stringResource(id = R.string.common_status_publicado), true)
                 }
             }
 
@@ -138,10 +139,10 @@ private fun SearchFakeField() {
                 .padding(horizontal = 14.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(Icons.Outlined.Search, contentDescription = "Buscar")
+            Icon(Icons.Outlined.Search, contentDescription = stringResource(id = R.string.home_search_content_description))
             Spacer(modifier = Modifier.width(10.dp))
             Text(
-                text = "Buscar mis objetos",
+                text = stringResource(id = R.string.mis_objetos_search_placeholder),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -167,9 +168,9 @@ private fun EstadoChip(text: String, selected: Boolean) {
 @Composable
 private fun MiObjetoCard(item: SwapObject, onClick: () -> Unit) {
     val statusLabel = if (item.moderationStatus == ModerationStatus.PUBLICADO) {
-        "Publicado"
+        stringResource(id = R.string.common_status_publicado)
     } else {
-        "Pendiente de Verificacion"
+        stringResource(id = R.string.common_status_pendiente_verificacion)
     }
 
     val statusColor = if (item.moderationStatus == ModerationStatus.PUBLICADO) {
@@ -216,7 +217,7 @@ private fun MiObjetoCard(item: SwapObject, onClick: () -> Unit) {
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = item.category.prettyName(),
+                        text = stringResource(id = item.category.labelRes()),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -232,10 +233,10 @@ private fun MiObjetoCard(item: SwapObject, onClick: () -> Unit) {
     }
 }
 
-private fun com.market.trameo.domain.model.ObjectCategory.prettyName(): String = when (this) {
-    com.market.trameo.domain.model.ObjectCategory.TECNOLOGIA -> "Tecnologia"
-    com.market.trameo.domain.model.ObjectCategory.LIBROS -> "Libros"
-    com.market.trameo.domain.model.ObjectCategory.ROPA -> "Ropa"
-    com.market.trameo.domain.model.ObjectCategory.HOGAR -> "Hogar"
-    com.market.trameo.domain.model.ObjectCategory.DEPORTES -> "Deportes"
+private fun com.market.trameo.domain.model.ObjectCategory.labelRes(): Int = when (this) {
+    com.market.trameo.domain.model.ObjectCategory.TECNOLOGIA -> R.string.object_category_tecnologia
+    com.market.trameo.domain.model.ObjectCategory.LIBROS -> R.string.object_category_libros
+    com.market.trameo.domain.model.ObjectCategory.ROPA -> R.string.object_category_ropa
+    com.market.trameo.domain.model.ObjectCategory.HOGAR -> R.string.object_category_hogar
+    com.market.trameo.domain.model.ObjectCategory.DEPORTES -> R.string.object_category_deportes
 }

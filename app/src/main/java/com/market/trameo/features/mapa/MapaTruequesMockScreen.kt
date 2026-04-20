@@ -31,8 +31,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.market.trameo.R
 import com.market.trameo.core.theme.Marfil
 import com.market.trameo.core.theme.Terracota
 
@@ -62,10 +64,10 @@ fun MapaTruequesMockScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBackClick) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(id = R.string.common_back))
                 }
                 Text(
-                    text = "Tradeos cercanos",
+                    text = stringResource(id = R.string.mapa_title),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -102,7 +104,7 @@ fun MapaTruequesMockScreen(
                                 .padding(12.dp)
                         ) {
                             Text(
-                                text = "Mapa mock: zonas con trueques activos",
+                                text = stringResource(id = R.string.mapa_mock_label),
                                 style = MaterialTheme.typography.bodySmall,
                                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp)
                             )
@@ -113,7 +115,7 @@ fun MapaTruequesMockScreen(
 
             item {
                 Text(
-                    text = "Cerca de ti",
+                    text = stringResource(id = R.string.mapa_nearby),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -139,7 +141,7 @@ fun MapaTruequesMockScreen(
                                 fontWeight = FontWeight.SemiBold
                             )
                             Text(
-                                text = "Distancia aproximada: ${trade.distancia}",
+                                text = stringResource(id = R.string.mapa_distance_format, trade.distancia),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )

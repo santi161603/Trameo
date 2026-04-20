@@ -24,6 +24,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.market.trameo.R
 
 private data class AdminBottomItem(
     val title: String,
@@ -36,21 +38,21 @@ fun AdminScreen(
     onBackClick: () -> Unit
 ) {
     val items = listOf(
-        AdminBottomItem(title = "Inicio", icon = Icons.Default.Home),
-        AdminBottomItem(title = "Usuarios", icon = Icons.Default.People),
-        AdminBottomItem(title = "Ajustes", icon = Icons.Default.Settings)
+        AdminBottomItem(title = stringResource(id = R.string.admin_tab_inicio), icon = Icons.Default.Home),
+        AdminBottomItem(title = stringResource(id = R.string.admin_tab_usuarios), icon = Icons.Default.People),
+        AdminBottomItem(title = stringResource(id = R.string.admin_tab_ajustes), icon = Icons.Default.Settings)
     )
     var selectedIndex by remember { mutableIntStateOf(0) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Panel de administrador") },
+                title = { Text(stringResource(id = R.string.admin_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Volver"
+                            contentDescription = stringResource(id = R.string.admin_back)
                         )
                     }
                 }
@@ -77,17 +79,17 @@ fun AdminScreen(
         ) {
             when (selectedIndex) {
                 0 -> Text(
-                    text = "Hola admin",
+                    text = stringResource(id = R.string.admin_hola),
                     style = MaterialTheme.typography.headlineSmall
                 )
 
                 1 -> Text(
-                    text = "Gestion de usuarios",
+                    text = stringResource(id = R.string.admin_gestion_usuarios),
                     style = MaterialTheme.typography.titleMedium
                 )
 
                 else -> Text(
-                    text = "Configuracion de administrador",
+                    text = stringResource(id = R.string.admin_configuracion),
                     style = MaterialTheme.typography.titleMedium
                 )
             }

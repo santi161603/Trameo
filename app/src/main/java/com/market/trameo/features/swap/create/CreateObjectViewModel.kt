@@ -103,9 +103,11 @@ class CreateObjectViewModel @Inject constructor(
             _isPublishing.value = true
             _publishResult.value = null
             runCatching {
+                val currentUserId = sessionDataStore.getCurrentUserId()
+                    ?: error("Debes iniciar sesion para publicar")
                 swapRepository.publish(
                     SwapObject(
-                        ownerId = sessionDataStore.userId.value,
+                        ownerId = currentUserId,
                         photos = photos.value,
                         name = name.value.trim(),
                         description = description.value.trim(),

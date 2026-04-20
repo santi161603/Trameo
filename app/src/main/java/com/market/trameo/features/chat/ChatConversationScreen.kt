@@ -32,8 +32,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.market.trameo.R
 import com.market.trameo.core.theme.Marfil
 import com.market.trameo.core.theme.Terracota
 
@@ -56,16 +58,16 @@ fun ChatConversationScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBackClick) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(id = R.string.common_back))
                 }
                 Column {
                     Text(
-                        text = contact?.name ?: "Chat",
+                        text = contact?.name ?: stringResource(id = R.string.chat_conversation_fallback_name),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = contact?.tradeTitle ?: "Intercambio",
+                        text = contact?.tradeTitle ?: stringResource(id = R.string.chat_conversation_fallback_trade),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -83,7 +85,7 @@ fun ChatConversationScreen(
                     OutlinedTextField(
                         value = input,
                         onValueChange = { input = it },
-                        placeholder = { Text("Escribe un mensaje") },
+                        placeholder = { Text(stringResource(id = R.string.chat_conversation_placeholder)) },
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(14.dp)
                     )
@@ -94,7 +96,11 @@ fun ChatConversationScreen(
                         modifier = Modifier.padding(top = 2.dp)
                     ) {
                         IconButton(onClick = { input = "" }) {
-                            Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Enviar", tint = Color.White)
+                            Icon(
+                                Icons.AutoMirrored.Filled.Send,
+                                contentDescription = stringResource(id = R.string.chat_conversation_send),
+                                tint = Color.White
+                            )
                         }
                     }
                 }

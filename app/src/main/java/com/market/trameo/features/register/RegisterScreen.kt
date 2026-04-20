@@ -44,6 +44,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -51,6 +52,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
+import com.market.trameo.R
 import com.market.trameo.core.utils.RequestResult
 import com.market.trameo.core.theme.Marfil
 import com.market.trameo.core.theme.Terracota
@@ -100,11 +102,11 @@ fun RegisterScreen(
                 .padding(horizontal = 20.dp)
         ) {
             IconButton(onClick = onBackClick) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(id = R.string.common_back))
             }
 
             Text(
-                text = "Crear cuenta",
+                text = stringResource(id = R.string.register_title),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
@@ -113,7 +115,7 @@ fun RegisterScreen(
 
             AsyncImage(
                 model = profilePhotoUri,
-                contentDescription = "Foto de perfil",
+                contentDescription = stringResource(id = R.string.register_profile_photo_content_description),
                 modifier = Modifier
                     .size(84.dp)
                     .clip(CircleShape)
@@ -126,13 +128,13 @@ fun RegisterScreen(
                 colors = ButtonDefaults.buttonColors(containerColor = Terracota),
                 modifier = Modifier.padding(top = 8.dp, bottom = 12.dp)
             ) {
-                Text("Agregar foto de perfil")
+                Text(stringResource(id = R.string.register_add_profile_photo))
             }
 
             RegisterField(
                 value = viewModel.name.value,
                 onValueChange = viewModel.name::onChange,
-                label = "Nombre",
+                label = stringResource(id = R.string.register_label_name),
                 leadingIcon = Icons.Default.Person,
                 error = viewModel.name.error,
                 enabled = !isLoading
@@ -141,7 +143,7 @@ fun RegisterScreen(
             RegisterField(
                 value = viewModel.city.value,
                 onValueChange = viewModel.city::onChange,
-                label = "Ciudad",
+                label = stringResource(id = R.string.register_label_city),
                 leadingIcon = Icons.Default.Home,
                 error = viewModel.city.error,
                 enabled = !isLoading
@@ -150,7 +152,7 @@ fun RegisterScreen(
             RegisterField(
                 value = viewModel.address.value,
                 onValueChange = viewModel.address::onChange,
-                label = "Direccion",
+                label = stringResource(id = R.string.register_label_address),
                 leadingIcon = Icons.Default.LocationOn,
                 error = viewModel.address.error,
                 enabled = !isLoading
@@ -159,7 +161,7 @@ fun RegisterScreen(
             RegisterField(
                 value = viewModel.phoneNumber.value,
                 onValueChange = viewModel.phoneNumber::onChange,
-                label = "Celular",
+                label = stringResource(id = R.string.register_label_phone),
                 leadingIcon = Icons.Default.Phone,
                 error = viewModel.phoneNumber.error,
                 enabled = !isLoading,
@@ -169,7 +171,7 @@ fun RegisterScreen(
             RegisterField(
                 value = viewModel.email.value,
                 onValueChange = viewModel.email::onChange,
-                label = "Correo electronico",
+                label = stringResource(id = R.string.register_label_email),
                 leadingIcon = Icons.Default.Email,
                 error = viewModel.email.error,
                 enabled = !isLoading,
@@ -182,7 +184,7 @@ fun RegisterScreen(
                     viewModel.password.onChange(it)
                     viewModel.confirmPassword.onChange(viewModel.confirmPassword.value)
                 },
-                label = "Contrasena",
+                label = stringResource(id = R.string.register_label_password),
                 leadingIcon = Icons.Default.Lock,
                 error = viewModel.password.error,
                 enabled = !isLoading,
@@ -192,7 +194,7 @@ fun RegisterScreen(
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
                         Icon(
                             imageVector = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                            contentDescription = "Mostrar contrasena"
+                            contentDescription = stringResource(id = R.string.register_toggle_password)
                         )
                     }
                 }
@@ -201,7 +203,7 @@ fun RegisterScreen(
             RegisterField(
                 value = viewModel.confirmPassword.value,
                 onValueChange = viewModel.confirmPassword::onChange,
-                label = "Confirmar contrasena",
+                label = stringResource(id = R.string.register_label_confirm_password),
                 leadingIcon = Icons.Default.Lock,
                 error = viewModel.confirmPassword.error,
                 enabled = !isLoading,
@@ -211,7 +213,7 @@ fun RegisterScreen(
                     IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
                         Icon(
                             imageVector = if (confirmPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                            contentDescription = "Mostrar confirmacion"
+                            contentDescription = stringResource(id = R.string.register_toggle_confirm_password)
                         )
                     }
                 }
@@ -231,7 +233,7 @@ fun RegisterScreen(
                         strokeWidth = 2.dp
                     )
                 } else {
-                    Text("Registrarme")
+                    Text(stringResource(id = R.string.register_button))
                 }
             }
         }

@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -18,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.market.trameo.R
 import com.market.trameo.core.utils.RequestResult
 import com.market.trameo.core.theme.TrameoTheme
 
@@ -77,7 +79,7 @@ snackbarHost = {
 
         // Título: "Recuperar contraseña"
         Text(
-            text = "Recuperar contraseña",
+            text = stringResource(id = R.string.forgot_password_title),
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
@@ -101,7 +103,7 @@ snackbarHost = {
             ) {
                 // Instrucciones
                 Text(
-                    text = "Introduce tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.",
+                    text = stringResource(id = R.string.forgot_password_description),
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     lineHeight = 22.sp
@@ -113,12 +115,12 @@ snackbarHost = {
                 OutlinedTextField(
                     value = viewModel.email.value, // Estado desde el ViewModel
                     onValueChange = { viewModel.email.onChange(it) }, // Actualiza el estado en el ViewModel
-                    label = { Text("Correo electrónico") },
-                    placeholder = { Text("Correo electrónico") },
+                    label = { Text(stringResource(id = R.string.forgot_password_email_label)) },
+                    placeholder = { Text(stringResource(id = R.string.forgot_password_email_label)) },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Email,
-                            contentDescription = "Icono de correo"
+                            contentDescription = stringResource(id = R.string.forgot_password_email_icon)
                         )
                     },
                     isError = viewModel.email.error != null, // Borde rojo si hay error
@@ -153,11 +155,11 @@ snackbarHost = {
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.Send,
-                        contentDescription = "Icono enviar",
+                        contentDescription = stringResource(id = R.string.forgot_password_send_icon),
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Enviar enlace")
+                    Text(text = stringResource(id = R.string.forgot_password_send_button))
                 }
             }
         }

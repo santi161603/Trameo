@@ -25,6 +25,8 @@ import androidx.compose.material.icons.filled.Autorenew
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -33,6 +35,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -42,6 +45,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -65,20 +69,49 @@ fun PerfilScreen(
     onPublicarClick: () -> Unit = {},
     onChatsClick: () -> Unit = {},
     onAdminOptionsClick: () -> Unit = {},
+    onLogoutSuccess: () -> Unit = {},
     viewModel: PerfilViewModel = hiltViewModel()
 ) {
     val currentUser by viewModel.currentUser.collectAsState()
+    val logoutCompleted by viewModel.logoutCompleted.collectAsState()
     val isAdmin = currentUser?.role == UserRole.ADMIN
+
+    LaunchedEffect(logoutCompleted) {
+        if (logoutCompleted) {
+            onLogoutSuccess()
+            viewModel.resetLogoutState()
+        }
+    }
 
     Scaffold(
         containerColor = Marfil,
         bottomBar = {
             TrameoBottomNavigation(
                 items = listOf(
-                    BottomNavItem(Routes.HOME, "Home", Icons.Default.Home, "Home"),
-                    BottomNavItem(Routes.MIS_OBJETOS, "Mis objetos", Icons.AutoMirrored.Filled.List, "Mis objetos"),
-                    BottomNavItem(Routes.TRUEQUES, "Trueques", Icons.Default.Autorenew, "Trueques"),
-                    BottomNavItem(Routes.PERFIL, "Perfil", Icons.Default.Person, "Perfil")
+                    BottomNavItem(
+                        Routes.HOME,
+                        stringResource(id = R.string.perfil_bottom_home),
+                        Icons.Default.Home,
+                        stringResource(id = R.string.perfil_bottom_home)
+                    ),
+                    BottomNavItem(
+                        Routes.MIS_OBJETOS,
+                        stringResource(id = R.string.perfil_bottom_mis_objetos),
+                        Icons.AutoMirrored.Filled.List,
+                        stringResource(id = R.string.perfil_bottom_mis_objetos)
+                    ),
+                    BottomNavItem(
+                        Routes.TRUEQUES,
+                        stringResource(id = R.string.perfil_bottom_trueques),
+                        Icons.Default.Autorenew,
+                        stringResource(id = R.string.perfil_bottom_trueques)
+                    ),
+                    BottomNavItem(
+                        Routes.PERFIL,
+                        stringResource(id = R.string.perfil_bottom_perfil),
+                        Icons.Default.Person,
+                        stringResource(id = R.string.perfil_bottom_perfil)
+                    )
                 ),
                 currentRoute = Routes.PERFIL,
                 onItemClick = { item ->
@@ -90,7 +123,7 @@ fun PerfilScreen(
                 },
                 onCenterClick = onPublicarClick,
                 centerIcon = Icons.Default.Add,
-                centerContentDescription = "Publicar"
+                centerContentDescription = stringResource(id = R.string.perfil_bottom_publicar)
             )
         }
     ) { padding ->
@@ -108,40 +141,52 @@ fun PerfilScreen(
                 StatsRow()
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Cuenta",
+                    text = stringResource(id = R.string.perfil_section_cuenta),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                MenuItem("Editar perfil")
-                MenuItem("Metodos de pago")
-                MenuItem("Seguridad")
-                MenuItem("Notificaciones")
+                MenuItem(stringResource(id = R.string.perfil_item_editar_perfil))
+                MenuItem(stringResource(id = R.string.perfil_item_metodos_pago))
+                MenuItem(stringResource(id = R.string.perfil_item_seguridad))
+                MenuItem(stringResource(id = R.string.perfil_item_notificaciones))
                 if (isAdmin) {
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Administracion",
+                        text = stringResource(id = R.string.perfil_section_admin),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     MenuItem(
-                        text = "Opciones de administrador",
+                        text = stringResource(id = R.string.perfil_item_admin_options),
                         highlighted = true,
                         onClick = onAdminOptionsClick
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Actividad",
+                    text = stringResource(id = R.string.perfil_section_actividad),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                MenuItem("Historial de intercambios")
-                MenuItem("Chats", onClick = onChatsClick)
-                MenuItem("Puntos acumulados")
-                MenuItem("Ayuda y soporte")
+                MenuItem(stringResource(id = R.string.perfil_item_historial))
+                MenuItem(stringResource(id = R.string.perfil_item_chats), onClick = onChatsClick)
+                MenuItem(stringResource(id = R.string.perfil_item_puntos))
+                MenuItem(stringResource(id = R.string.perfil_item_ayuda))
+
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(
+                    onClick = { viewModel.logout() },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.perfil_logout_button),
+                        color = MaterialTheme.colorScheme.onError
+                    )
+                }
             }
         }
     }
@@ -163,7 +208,7 @@ private fun ProfileHeader(currentUser: User?) {
                         .data(currentUser?.profilePhotoUri ?: "https://picsum.photos/seed/trameo-perfil/300/300")
                         .crossfade(true)
                         .build(),
-                    contentDescription = "Avatar perfil",
+                    contentDescription = stringResource(id = R.string.perfil_avatar_content_description),
                     placeholder = painterResource(id = R.drawable.ic_launcher_background),
                     error = painterResource(id = R.drawable.ic_launcher_foreground),
                     modifier = Modifier
@@ -175,12 +220,13 @@ private fun ProfileHeader(currentUser: User?) {
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
-                        text = currentUser?.name ?: "Santiago P.",
+                        text = currentUser?.name ?: stringResource(id = R.string.perfil_fallback_name),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = currentUser?.city?.let { "$it, Colombia" } ?: "Medellin, Colombia",
+                        text = currentUser?.city?.let { "$it, Colombia" }
+                            ?: stringResource(id = R.string.perfil_fallback_city),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -192,7 +238,7 @@ private fun ProfileHeader(currentUser: User?) {
                 color = Terracota.copy(alpha = 0.1f)
             ) {
                 Text(
-                    text = "Nivel Explorador · 840 pts",
+                    text = stringResource(id = R.string.perfil_level_text),
                     color = Terracota,
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.SemiBold,
@@ -206,9 +252,21 @@ private fun ProfileHeader(currentUser: User?) {
 @Composable
 private fun StatsRow() {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        StatCard(title = "12", subtitle = "Intercambios", modifier = Modifier.weight(1f))
-        StatCard(title = "4", subtitle = "Activos", modifier = Modifier.weight(1f))
-        StatCard(title = "4.8", subtitle = "Reputacion", modifier = Modifier.weight(1f))
+        StatCard(
+            title = stringResource(id = R.string.perfil_stat_swaps_value),
+            subtitle = stringResource(id = R.string.perfil_stat_swaps_label),
+            modifier = Modifier.weight(1f)
+        )
+        StatCard(
+            title = stringResource(id = R.string.perfil_stat_active_value),
+            subtitle = stringResource(id = R.string.perfil_stat_active_label),
+            modifier = Modifier.weight(1f)
+        )
+        StatCard(
+            title = stringResource(id = R.string.perfil_stat_reputation_value),
+            subtitle = stringResource(id = R.string.perfil_stat_reputation_label),
+            modifier = Modifier.weight(1f)
+        )
     }
 }
 

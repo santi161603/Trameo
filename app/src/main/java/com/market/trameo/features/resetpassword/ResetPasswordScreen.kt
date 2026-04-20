@@ -22,9 +22,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.market.trameo.R
 import com.market.trameo.core.utils.RequestResult
 import kotlinx.coroutines.delay
 
@@ -60,19 +62,22 @@ fun ResetPasswordScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Cambiar contraseña",
+                text = stringResource(id = R.string.reset_password_title),
                 style = MaterialTheme.typography.headlineSmall
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Contraseña quemada actual: ${viewModel.currentBurnedPassword()}",
+                text = stringResource(
+                    id = R.string.reset_password_burned_hint,
+                    viewModel.currentBurnedPassword()
+                ),
                 style = MaterialTheme.typography.bodyMedium
             )
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
                 value = viewModel.newPassword.value,
                 onValueChange = { viewModel.newPassword.onChange(it) },
-                label = { Text("Nueva contraseña") },
+                label = { Text(stringResource(id = R.string.reset_password_new_label)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 singleLine = true,
                 isError = viewModel.newPassword.error != null,
@@ -84,7 +89,7 @@ fun ResetPasswordScreen(
             OutlinedTextField(
                 value = viewModel.confirmPassword.value,
                 onValueChange = { viewModel.confirmPassword.onChange(it) },
-                label = { Text("Confirmar contraseña") },
+                label = { Text(stringResource(id = R.string.reset_password_confirm_label)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 singleLine = true,
                 isError = viewModel.confirmPassword.error != null,
@@ -98,7 +103,7 @@ fun ResetPasswordScreen(
                 enabled = viewModel.isFormValid,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Guardar nueva contraseña")
+                Text(stringResource(id = R.string.reset_password_button))
             }
         }
     }

@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -115,7 +116,7 @@ fun LoginScreen(
                 ) {
                     Image(
                         modifier = Modifier.size(94.dp),
-                        contentDescription = "Logo de Trameo",
+                        contentDescription = stringResource(id = R.string.login_logo_content_description),
                         painter = painterResource(id = R.mipmap.ic_launcher_foreground)
                     )
                 }
@@ -126,7 +127,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = viewModel.email.value,
                 onValueChange = { viewModel.email.onChange(it) },
-                label = { Text(text = "Correo electrónico") },
+                label = { Text(text = stringResource(id = R.string.login_email_label)) },
                 leadingIcon = {
                     Icon(imageVector = Icons.Outlined.Email, contentDescription = null, tint = Terracota)
                 },
@@ -159,7 +160,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = viewModel.password.value,
                 onValueChange = { viewModel.password.onChange(it) },
-                label = { Text(text = "Contraseña") },
+                label = { Text(text = stringResource(id = R.string.login_password_label)) },
                 leadingIcon = {
                     Icon(imageVector = Icons.Outlined.Lock, contentDescription = null, tint = Terracota)
                 },
@@ -205,7 +206,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "¿Olvidaste tu contraseña?",
+                text = stringResource(id = R.string.login_forgot_password),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
@@ -238,7 +239,11 @@ fun LoginScreen(
                         strokeWidth = 2.dp
                     )
                 } else {
-                    Text(text = "Iniciar sesión", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                    Text(
+                        text = stringResource(id = R.string.login_sign_in_button),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
                 }
             }
 
@@ -253,7 +258,7 @@ fun LoginScreen(
             ) {
                 HorizontalDivider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.outline.copy(alpha = 0.6f))
                 Text(
-                    text = "o",
+                    text = stringResource(id = R.string.login_or),
                     color = GrisPizarra,
                     modifier = Modifier.padding(horizontal = 12.dp)
                 )
@@ -273,7 +278,11 @@ fun LoginScreen(
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = Terracota),
                 border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.8f))
             ) {
-                Text(text = "Crear cuenta", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                Text(
+                    text = stringResource(id = R.string.login_create_account_button),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
 
             Spacer(modifier = Modifier.height(24.dp))

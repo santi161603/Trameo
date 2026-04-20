@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -92,10 +93,10 @@ fun MisIntercambiosScreen(
         bottomBar = {
             TrameoBottomNavigation(
                 items = listOf(
-                    BottomNavItem(Routes.HOME, "Home", Icons.Default.Home, "Home"),
-                    BottomNavItem(Routes.MIS_OBJETOS, "Mis objetos", Icons.AutoMirrored.Filled.List, "Mis objetos"),
-                    BottomNavItem(Routes.TRUEQUES, "Trueques", Icons.Default.Autorenew, "Trueques"),
-                    BottomNavItem(Routes.PERFIL, "Perfil", Icons.Default.Person, "Perfil")
+                    BottomNavItem(Routes.HOME, stringResource(id = R.string.home_bottom_home), Icons.Default.Home, stringResource(id = R.string.home_bottom_home)),
+                    BottomNavItem(Routes.MIS_OBJETOS, stringResource(id = R.string.home_bottom_mis_objetos), Icons.AutoMirrored.Filled.List, stringResource(id = R.string.home_bottom_mis_objetos)),
+                    BottomNavItem(Routes.TRUEQUES, stringResource(id = R.string.home_bottom_trueques), Icons.Default.Autorenew, stringResource(id = R.string.home_bottom_trueques)),
+                    BottomNavItem(Routes.PERFIL, stringResource(id = R.string.home_bottom_perfil), Icons.Default.Person, stringResource(id = R.string.home_bottom_perfil))
                 ),
                 currentRoute = Routes.TRUEQUES,
                 onItemClick = { item ->
@@ -105,7 +106,7 @@ fun MisIntercambiosScreen(
                 },
                 onCenterClick = onPublicarClick,
                 centerIcon = Icons.Default.Add,
-                centerContentDescription = "Publicar"
+                centerContentDescription = stringResource(id = R.string.home_bottom_publicar)
             )
         }
     ) { padding ->
@@ -119,12 +120,12 @@ fun MisIntercambiosScreen(
         ) {
             item {
                 Text(
-                    text = "Mis intercambios",
+                    text = stringResource(id = R.string.intercambios_title),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Gestiona tus solicitudes activas",
+                    text = stringResource(id = R.string.intercambios_subtitle),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -132,9 +133,9 @@ fun MisIntercambiosScreen(
                 SearchFakeField()
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    StatusChip(text = "Todos", selected = true)
-                    StatusChip(text = "Pendientes", selected = false)
-                    StatusChip(text = "Aceptados", selected = false)
+                    StatusChip(text = stringResource(id = R.string.intercambios_filter_todos), selected = true)
+                    StatusChip(text = stringResource(id = R.string.intercambios_filter_pendientes), selected = false)
+                    StatusChip(text = stringResource(id = R.string.intercambios_filter_aceptados), selected = false)
                 }
             }
 
@@ -159,10 +160,10 @@ private fun SearchFakeField() {
                 .padding(horizontal = 14.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(Icons.Outlined.Search, contentDescription = "Buscar")
+            Icon(Icons.Outlined.Search, contentDescription = stringResource(id = R.string.home_search_content_description))
             Spacer(modifier = Modifier.width(10.dp))
             Text(
-                text = "Buscar intercambio",
+                text = stringResource(id = R.string.intercambios_search_placeholder),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
