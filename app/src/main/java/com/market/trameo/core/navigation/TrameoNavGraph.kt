@@ -92,7 +92,9 @@ fun TrameoNavGraph() {
             LoginScreen(
                 onLoginSuccess = {
                     navController.navigate(HomeDestination) {
-                        popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
+
+                        // Evita volver a Login con el botón atrás después de autenticar.
+                        popUpTo(LoginDestination) { inclusive = true }
                         launchSingleTop = true
                     }
                 },

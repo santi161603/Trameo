@@ -3,6 +3,9 @@ package com.market.trameo.features.login
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.FirebaseNetworkException
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.market.trameo.core.session.SessionDataStore
 import com.market.trameo.core.utils.RequestResult
 import com.market.trameo.core.utils.ValidatedField
@@ -61,14 +64,20 @@ class LoginViewModel @Inject constructor(
                     email = email.value.trim(),
                     password = password.value
                 )
-                _loginResult.value = if (user != null) {
+                if (user != null) {
                     sessionDataStore.updateUserId(user.id)
-                    RequestResult.Success("Bienvenido, ${user.name}")
+                    _loginResult.value = RequestResult.Success("Bienvenido, ${user.name}")
                 } else {
-                    RequestResult.Failure("Credenciales invalidas")
+                    _loginResult.value = RequestResult.Failure("No se pudo obtener la información del usuario.")
                 }
+            } catch (e: FirebaseAuthInvalidUserException) {
+                _loginResult.value = RequestResult.Failure("El correo electrónico no está registrado.")
+            } catch (e: FirebaseAuthInvalidCredentialsException) {
+                _loginResult.value = RequestResult.Failure("La contraseña es incorrecta o el correo tiene un formato inválido.")
+            } catch (e: FirebaseNetworkException) {
+                _loginResult.value = RequestResult.Failure("Error de conexión. Revisa tu internet.")
             } catch (error: Exception) {
-                _loginResult.value = RequestResult.Failure(error.message ?: "Error inesperado")
+                _loginResult.value = RequestResult.Failure(error.message ?: "Error inesperado al iniciar sesión")
             }
             _isLoading.value = false
         }

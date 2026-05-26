@@ -87,8 +87,11 @@
     <string name="common_back">Volver</string>
     <string name="common_points_format">%1$d pts</string>
     <string name="common_status_publicado">Publicado</string>
+    <string name="common_status_finalizado">Finalizado</string>
+    <string name="common_status_eliminado">Eliminado</string>
+    <string name="common_status_rechazado">Rechazado</string>
     <string name="common_status_pendiente">Pendiente</string>
-    <string name="common_status_pendiente_verificacion">Pendiente de Verificacion</string>
+    <string name="common_status_pendiente_verificacion">En espera de aprobación</string>
 
     <string name="verify_title">Ingresar código</string>
     <string name="verify_hint_code">Código quemado para pruebas: 123456</string>
@@ -183,6 +186,7 @@
     <string name="mis_objetos_title">Mis objetos</string>
     <string name="mis_objetos_subtitle">Administra tus publicaciones</string>
     <string name="mis_objetos_search_placeholder">Buscar mis objetos</string>
+    <string name="mis_objetos_clear_filters">Limpiar filtros</string>
 
     <string name="intercambios_title">Mis intercambios</string>
     <string name="intercambios_subtitle">Gestiona tus solicitudes activas</string>

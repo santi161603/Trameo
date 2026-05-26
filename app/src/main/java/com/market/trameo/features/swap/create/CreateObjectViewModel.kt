@@ -6,11 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.market.trameo.core.session.SessionDataStore
 import com.market.trameo.core.utils.RequestResult
 import com.market.trameo.core.utils.ValidatedField
-import com.market.trameo.domain.model.ModerationStatus
+import com.market.trameo.domain.model.CreateHomeObjectRequest
 import com.market.trameo.domain.model.ObjectCategory
 import com.market.trameo.domain.model.ObjectCondition
-import com.market.trameo.domain.model.SwapObject
-import com.market.trameo.domain.repository.SwapRepository
+import com.market.trameo.domain.service.HomeObjectCreationService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +20,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class CreateObjectViewModel @Inject constructor(
-    private val swapRepository: SwapRepository,
+    private val homeObjectCreationService: HomeObjectCreationService,
     private val sessionDataStore: SessionDataStore
 ) : ViewModel() {
 
@@ -103,18 +102,16 @@ class CreateObjectViewModel @Inject constructor(
             _isPublishing.value = true
             _publishResult.value = null
             runCatching {
-                val currentUserId = sessionDataStore.getCurrentUserId()
+                sessionDataStore.getCurrentUserId()
                     ?: error("Debes iniciar sesion para publicar")
-                swapRepository.publish(
-                    SwapObject(
-                        ownerId = currentUserId,
-                        photos = photos.value,
+                homeObjectCreationService.create(
+                    CreateHomeObjectRequest(
+                        photos = photos.value.map(::requireLocalUri),
                         name = name.value.trim(),
                         description = description.value.trim(),
-                        category = category.value!!,
-                        condition = condition.value!!,
-                        exchangePreferences = exchangePreferences.value.trim(),
-                        moderationStatus = ModerationStatus.PENDIENTE_VERIFICACION
+                        category = category.value!!.name,
+                        condition = condition.value!!.name,
+                        exchangePreferences = exchangePreferences.value.trim()
                     )
                 )
             }.onSuccess {
@@ -125,6 +122,14 @@ class CreateObjectViewModel @Inject constructor(
             }
             _isPublishing.value = false
         }
+    }
+
+    private fun requireLocalUri(uri: Uri): String {
+        val scheme = uri.scheme?.lowercase()
+        if (scheme != "content" && scheme != "file") {
+            error("Solo se permiten URIs locales")
+        }
+        return uri.toString()
     }
 
     fun resetPublishResult() {

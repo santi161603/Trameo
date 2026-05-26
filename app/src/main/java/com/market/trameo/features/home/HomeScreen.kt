@@ -70,11 +70,10 @@ import com.market.trameo.core.component.BottomNavItem
 import com.market.trameo.core.component.TrameoBottomNavigation
 import com.market.trameo.core.navigation.Routes
 import com.market.trameo.core.theme.Marfil
-import com.market.trameo.core.theme.MarfilVariant
 import com.market.trameo.core.theme.Terracota
+import com.market.trameo.domain.model.HomeObject
 import com.market.trameo.domain.model.ModerationStatus
 import com.market.trameo.domain.model.ObjectCategory
-import com.market.trameo.domain.model.SwapObject
 import com.market.trameo.domain.model.User
 
 @Composable
@@ -125,14 +124,10 @@ fun HomeScreen(
                 ),
                 currentRoute = Routes.HOME,
                 onItemClick = { item ->
-                    if (item.route == Routes.TRUEQUES) {
-                        onTruequesClick()
-                    }
-                    if (item.route == Routes.PERFIL) {
-                        onPerfilClick()
-                    }
-                    if (item.route == Routes.MIS_OBJETOS) {
-                        onMisObjetosClick()
+                    when (item.route) {
+                        Routes.TRUEQUES -> onTruequesClick()
+                        Routes.PERFIL -> onPerfilClick()
+                        Routes.MIS_OBJETOS -> onMisObjetosClick()
                     }
                 },
                 onCenterClick = onPublicarClick,
@@ -159,7 +154,7 @@ fun HomeScreen(
 @Composable
 private fun HomeContent(
     padding: PaddingValues,
-    items: List<SwapObject>,
+    items: List<HomeObject>,
     query: String,
     selectedCategory: ObjectCategory?,
     onQueryChange: (String) -> Unit,
@@ -249,9 +244,10 @@ private fun HomeHeader(
         verticalAlignment = Alignment.CenterVertically
     ) {
         val context = LocalContext.current
+        val profileUrl = currentUser?.profilePhotoUri?.takeIf { it.isNotBlank() }
         AsyncImage(
             model = ImageRequest.Builder(context)
-                .data(currentUser?.profilePhotoUri ?: "https://picsum.photos/seed/trameo-profile/200/200")
+                .data(profileUrl)
                 .crossfade(true)
                 .build(),
             contentDescription = stringResource(id = R.string.home_profile_content_description),
@@ -393,27 +389,12 @@ private fun HomeBanner(onClick: () -> Unit) {
 
 @Composable
 private fun HomeObjectCard(
-    item: SwapObject,
+    item: HomeObject,
     isFavorite: Boolean,
     onFavoriteClick: () -> Unit,
     onClick: () -> Unit
 ) {
-    val statusLabel = when (item.moderationStatus) {
-        ModerationStatus.PUBLICADO -> stringResource(id = R.string.common_status_publicado)
-        ModerationStatus.PENDIENTE_VERIFICACION -> stringResource(id = R.string.common_status_pendiente)
-    }
-
-    val statusColor = when (item.moderationStatus) {
-        ModerationStatus.PUBLICADO -> Terracota
-        ModerationStatus.PENDIENTE_VERIFICACION -> Color(0xFFD38A1F)
-    }
-
-    val conditionColor = when (item.condition) {
-        com.market.trameo.domain.model.ObjectCondition.NUEVO -> Color(0xFF2E7D32)
-        com.market.trameo.domain.model.ObjectCondition.COMO_NUEVO -> Color(0xFF1976D2)
-        com.market.trameo.domain.model.ObjectCondition.BUENO -> Color(0xFFF9A825)
-        com.market.trameo.domain.model.ObjectCondition.REGULAR -> Color(0xFF8D6E63)
-    }
+    val statusColor = if (item.moderationStatus == ModerationStatus.PUBLICADO) Terracota else Color(0xFFD38A1F)
 
     Card(
         modifier = Modifier
@@ -442,13 +423,13 @@ private fun HomeObjectCard(
 
                 Surface(
                     shape = RoundedCornerShape(999.dp),
-                    color = conditionColor.copy(alpha = 0.9f),
+                    color = Color.Black.copy(alpha = 0.6f),
                     modifier = Modifier
                         .padding(8.dp)
                         .align(Alignment.TopStart)
                 ) {
                     Text(
-                        text = stringResource(id = item.condition.labelRes()),
+                        text = item.condition,
                         color = Color.White,
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
@@ -475,15 +456,10 @@ private fun HomeObjectCard(
                     }
                 }
                 Text(
-                    text = stringResource(id = item.category.labelRes()),
+                    text = item.category,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 4.dp)
-                )
-                Text(
-                    text = stringResource(id = R.string.home_by_owner, item.ownerDisplayName()),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Surface(
                     shape = RoundedCornerShape(999.dp),
@@ -491,7 +467,10 @@ private fun HomeObjectCard(
                     modifier = Modifier.padding(top = 6.dp)
                 ) {
                     Text(
-                        text = statusLabel,
+                        text = when (item.moderationStatus) {
+                            ModerationStatus.PUBLICADO -> stringResource(id = R.string.common_status_publicado)
+                            else -> stringResource(id = R.string.common_status_pendiente_verificacion)
+                        },
                         color = statusColor,
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
@@ -503,24 +482,12 @@ private fun HomeObjectCard(
     }
 }
 
-private fun com.market.trameo.domain.model.ObjectCategory.labelRes(): Int = when (this) {
-    com.market.trameo.domain.model.ObjectCategory.TECNOLOGIA -> R.string.object_category_tecnologia
-    com.market.trameo.domain.model.ObjectCategory.LIBROS -> R.string.object_category_libros
-    com.market.trameo.domain.model.ObjectCategory.ROPA -> R.string.object_category_ropa
-    com.market.trameo.domain.model.ObjectCategory.HOGAR -> R.string.object_category_hogar
-    com.market.trameo.domain.model.ObjectCategory.DEPORTES -> R.string.object_category_deportes
-}
-
-private fun com.market.trameo.domain.model.ObjectCondition.labelRes(): Int = when (this) {
-    com.market.trameo.domain.model.ObjectCondition.NUEVO -> R.string.object_condition_nuevo
-    com.market.trameo.domain.model.ObjectCondition.COMO_NUEVO -> R.string.object_condition_como_nuevo
-    com.market.trameo.domain.model.ObjectCondition.BUENO -> R.string.object_condition_bueno
-    com.market.trameo.domain.model.ObjectCondition.REGULAR -> R.string.object_condition_regular
-}
-
-private fun SwapObject.ownerDisplayName(): String = when (ownerId) {
-    "seed-user-1" -> "Santiago"
-    else -> ownerId
+private fun ObjectCategory.labelRes(): Int = when (this) {
+    ObjectCategory.TECNOLOGIA -> R.string.object_category_tecnologia
+    ObjectCategory.LIBROS -> R.string.object_category_libros
+    ObjectCategory.ROPA -> R.string.object_category_ropa
+    ObjectCategory.HOGAR -> R.string.object_category_hogar
+    ObjectCategory.DEPORTES -> R.string.object_category_deportes
 }
 
 private fun String.compactTitle(): String {

@@ -1,7 +1,9 @@
 package com.market.trameo.di
 
+import com.market.trameo.data.repository.HomeRepositoryImpl
 import com.market.trameo.data.repository.SwapRepositoryImpl
 import com.market.trameo.data.repository.UserRepositoryImpl
+import com.market.trameo.domain.repository.HomeRepository
 import com.market.trameo.domain.repository.SwapRepository
 import com.market.trameo.domain.repository.UserRepository
 import dagger.Binds
@@ -25,4 +27,10 @@ abstract class RepositoryModule {
     abstract fun bindSwapRepository(
         swapRepositoryImpl: SwapRepositoryImpl
     ): SwapRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindHomeRepository(
+        homeRepositoryImpl: HomeRepositoryImpl
+    ): HomeRepository
 }

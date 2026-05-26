@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -73,6 +74,21 @@ dependencies {
     // Coil
     implementation(libs.coil.compose)
     implementation(libs.coilNetworkOkhttp)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
+    implementation(libs.kotlinx.coroutines.play.services)
+
+    implementation(libs.firebase.ai)
+
+    // Google Maps
+    implementation(libs.play.services.maps)
+
+    // Cloudinary
+    implementation(libs.cloudinary.android)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

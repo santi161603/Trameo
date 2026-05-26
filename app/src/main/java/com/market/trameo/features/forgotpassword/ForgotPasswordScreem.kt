@@ -8,7 +8,6 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -28,45 +27,58 @@ fun ForgotPassWordScreem(
     onNavigateBack: () -> Unit = {},
     onCodeSent: () -> Unit = {},
     viewModel: ForgotPasswordViewModel = hiltViewModel()
-){// Estado para gestionar los snackbars
-val snackbarHostState = remember { SnackbarHostState() }
-// Observar el estado de recoveryResult
-val recoveryResult by viewModel.recoveryResult.collectAsState()
+) {
+    // Estado para gestionar los snackbars
+    val snackbarHostState = remember { SnackbarHostState() }
+    
+    // Observar estados del ViewModel
+    val recoveryResult by viewModel.recoveryResult.collectAsState()
+    val showSuccessDialog by viewModel.showSuccessDialog.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
-// Efecto para mostrar el snackbar cuando hay resultado
-LaunchedEffect(recoveryResult) {
-    recoveryResult?.let { result ->
-        val message = when (result) {
-            is RequestResult.Success -> result.message
-            is RequestResult.Failure -> result.errorMessage
-        }
-        snackbarHostState.showSnackbar(message)
-
-        // Si fue exitoso, ir al paso de ingresar código.
-        if (result is RequestResult.Success) {
-            delay(700)
-            onCodeSent()
-        }
-
-        // Resetear el resultado después de mostrarlo
-        viewModel.resetRecoveryResult()
+    // Alerta de éxito
+    if (showSuccessDialog) {
+        AlertDialog(
+            onDismissRequest = { /* No permitir cerrar fuera */ },
+            title = { Text("Correo enviado") },
+            text = { Text("Correo de recuperación enviado, revisa la bandeja de tu correo o la bandeja de spam.") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.dismissSuccessDialog()
+                        onNavigateBack() // Regresa al login
+                    }
+                ) {
+                    Text("Continuar")
+                }
+            }
+        )
     }
-}
 
-// Scaffold con SnackbarHost
-Scaffold(
-snackbarHost = {
-    SnackbarHost(snackbarHostState) { data ->
-        val isError = recoveryResult is RequestResult.Failure
-        Snackbar(
-            containerColor = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary
-        ) {
-            Text(data.visuals.message)
+    // Efecto para mostrar el snackbar cuando hay error
+    LaunchedEffect(recoveryResult) {
+        recoveryResult?.let { result ->
+            if (result is RequestResult.Failure) {
+                snackbarHostState.showSnackbar(result.errorMessage)
+                viewModel.resetRecoveryResult()
+            }
         }
     }
-}
-) { paddingValues ->
+
+    // Scaffold con SnackbarHost
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(snackbarHostState) { data ->
+                Snackbar(
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError
+                ) {
+                    Text(data.visuals.message)
+                }
+            }
+        }
+    ) { paddingValues ->
+        // ... contenido de la columna ...
 
     Column(
         modifier = Modifier
@@ -141,10 +153,10 @@ snackbarHost = {
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Botón "Enviar enlace" - habilitado solo si el formulario es válido
+                // Botón "Enviar enlace"
                 Button(
-                    onClick = { viewModel.sendRecoveryEmail() }, // Llama la función del ViewModel
-                    enabled = viewModel.isFormValid, // Solo habilitado si el email es válido
+                    onClick = { viewModel.sendRecoveryEmail() },
+                    enabled = viewModel.isFormValid && !isLoading,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 8.dp),
@@ -153,13 +165,21 @@ snackbarHost = {
                         containerColor = MaterialTheme.colorScheme.tertiary
                     )
                 ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.Send,
-                        contentDescription = stringResource(id = R.string.forgot_password_send_icon),
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = stringResource(id = R.string.forgot_password_send_button))
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            color = MaterialTheme.colorScheme.onTertiary,
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Send,
+                            contentDescription = stringResource(id = R.string.forgot_password_send_icon),
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = stringResource(id = R.string.forgot_password_send_button))
+                    }
                 }
             }
         }

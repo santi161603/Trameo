@@ -14,6 +14,10 @@
         android:name="android.hardware.camera"
         android:required="false" />
 
+    <queries>
+        <package android:name="com.google.android.gms" />
+    </queries>
+
     <application
         android:name=".TrameoApp"
         android:allowBackup="true"
@@ -24,6 +28,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Trameo">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyD9AHW1OxoNgVD0MpE5XT5hLpvgbrEeLXw" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

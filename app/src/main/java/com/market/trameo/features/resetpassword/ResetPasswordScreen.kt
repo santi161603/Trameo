@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.market.trameo.R
 import com.market.trameo.core.utils.RequestResult
-import kotlinx.coroutines.delay
 
 @Composable
 fun ResetPasswordScreen(
@@ -46,7 +45,6 @@ fun ResetPasswordScreen(
             }
             snackbarHostState.showSnackbar(message)
             if (result is RequestResult.Success) {
-                delay(700)
                 onPasswordResetSuccess()
             }
             viewModel.resetResetResult()

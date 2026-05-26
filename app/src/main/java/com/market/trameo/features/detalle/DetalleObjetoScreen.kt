@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.market.trameo.R
+import com.market.trameo.domain.model.HomeObject
 import com.market.trameo.domain.model.ObjectCategory
 import com.market.trameo.domain.model.ObjectCondition
 
@@ -439,7 +440,7 @@ private fun com.market.trameo.domain.model.SwapObject.toObjetoDetalle(): ObjetoD
     val ownerPhoto = if (ownerId == "seed-user-1") {
         "https://picsum.photos/seed/trameo-profile-seed/200/200"
     } else {
-        "https://picsum.photos/seed/trameo-user/200/200"
+        ""
     }
 
     return ObjetoDetalle(
@@ -452,6 +453,32 @@ private fun com.market.trameo.domain.model.SwapObject.toObjetoDetalle(): ObjetoD
         imagenesAdicionales = extraImages,
         categoria = category.prettyName(),
         estado = condition.prettyName(),
+        buscaIntercambio = exchangePreferences,
+        publicadoPorNombre = ownerName,
+        publicadoPorFotoUrl = ownerPhoto
+    )
+}
+
+private fun HomeObject.toObjetoDetalle(): ObjetoDetalle {
+    val firstImage = photos.firstOrNull()
+    val extraImages = photos.drop(1)
+    val ownerName = if (ownerId == "seed-user-1") "Santiago Acero" else "Usuario Trameo"
+    val ownerPhoto = if (ownerId == "seed-user-1") {
+        "https://picsum.photos/seed/trameo-profile-seed/200/200"
+    } else {
+        ""
+    }
+
+    return ObjetoDetalle(
+        id = id,
+        nombre = name,
+        ubicacion = "Armenia, Quindio",
+        descripcion = description,
+        precio = "Intercambio",
+        imagenUrl = firstImage,
+        imagenesAdicionales = extraImages,
+        categoria = category,
+        estado = condition,
         buscaIntercambio = exchangePreferences,
         publicadoPorNombre = ownerName,
         publicadoPorFotoUrl = ownerPhoto

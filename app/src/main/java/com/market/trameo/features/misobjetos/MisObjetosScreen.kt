@@ -11,8 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -24,10 +24,11 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -50,8 +51,6 @@ import com.market.trameo.core.component.BottomNavItem
 import com.market.trameo.core.component.TrameoBottomNavigation
 import com.market.trameo.core.navigation.Routes
 import com.market.trameo.core.theme.Marfil
-import com.market.trameo.core.theme.MarfilVariant
-import com.market.trameo.core.theme.Terracota
 import com.market.trameo.domain.model.ModerationStatus
 import com.market.trameo.domain.model.SwapObject
 
@@ -64,7 +63,9 @@ fun MisObjetosScreen(
     onPublicarClick: () -> Unit = {},
     viewModel: MyObjectsViewModel = hiltViewModel()
 ) {
-    val items by viewModel.items.collectAsState()
+    val items by viewModel.filteredItems.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState()
+    val selectedStatuses by viewModel.selectedStatuses.collectAsState()
 
     Scaffold(
         containerColor = Marfil,
@@ -110,12 +111,22 @@ fun MisObjetosScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.height(12.dp))
-                SearchFakeField()
+                SearchField(
+                    value = searchQuery,
+                    onValueChange = viewModel::updateSearchQuery
+                )
                 Spacer(modifier = Modifier.height(12.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    EstadoChip(stringResource(id = R.string.common_status_pendiente_verificacion), false)
-                    EstadoChip(stringResource(id = R.string.common_status_publicado), true)
-                }
+                StatusFilters(
+                    selectedStatuses = selectedStatuses,
+                    onToggleStatus = viewModel::toggleStatus
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(id = R.string.mis_objetos_clear_filters),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable { viewModel.clearFilters() }
+                )
             }
 
             items(items, key = { it.id }) { item ->
@@ -126,57 +137,53 @@ fun MisObjetosScreen(
 }
 
 @Composable
-private fun SearchFakeField() {
-    Surface(
-        shape = RoundedCornerShape(16.dp),
-        color = Color.White,
-        tonalElevation = 2.dp,
+private fun SearchField(
+    value: String,
+    onValueChange: (String) -> Unit
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = stringResource(id = R.string.home_search_content_description)) },
+        placeholder = { Text(text = stringResource(id = R.string.mis_objetos_search_placeholder)) },
         modifier = Modifier.fillMaxWidth()
+    )
+}
+
+@Composable
+private fun StatusFilters(
+    selectedStatuses: Set<ModerationStatus>,
+    onToggleStatus: (ModerationStatus) -> Unit
+) {
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 14.dp, vertical = 14.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(Icons.Outlined.Search, contentDescription = stringResource(id = R.string.home_search_content_description))
-            Spacer(modifier = Modifier.width(10.dp))
-            Text(
-                text = stringResource(id = R.string.mis_objetos_search_placeholder),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+        items(ModerationStatus.entries, key = { it.name }) { status ->
+            FilterChip(
+                selected = selectedStatuses.contains(status),
+                onClick = { onToggleStatus(status) },
+                label = { Text(text = stringResource(id = status.labelRes())) }
             )
         }
     }
 }
 
 @Composable
-private fun EstadoChip(text: String, selected: Boolean) {
-    Surface(
-        shape = RoundedCornerShape(999.dp),
-        color = if (selected) Terracota else MarfilVariant
-    ) {
-        Text(
-            text = text,
-            color = if (selected) Color.White else MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.labelLarge,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
-        )
-    }
-}
-
-@Composable
 private fun MiObjetoCard(item: SwapObject, onClick: () -> Unit) {
-    val statusLabel = if (item.moderationStatus == ModerationStatus.PUBLICADO) {
-        stringResource(id = R.string.common_status_publicado)
-    } else {
-        stringResource(id = R.string.common_status_pendiente_verificacion)
+    val statusLabel = when (item.moderationStatus) {
+        ModerationStatus.PUBLICADO -> stringResource(id = R.string.common_status_publicado)
+        ModerationStatus.PENDIENTE_VERIFICACION -> stringResource(id = R.string.common_status_pendiente_verificacion)
+        ModerationStatus.FINALIZADO -> stringResource(id = R.string.common_status_finalizado)
+        ModerationStatus.ELIMINADO -> stringResource(id = R.string.common_status_eliminado)
+        ModerationStatus.RECHAZADO -> stringResource(id = R.string.common_status_rechazado)
     }
 
-    val statusColor = if (item.moderationStatus == ModerationStatus.PUBLICADO) {
-        Color(0xFF3F8E4E)
-    } else {
-        Color(0xFFD38A1F)
+    val statusColor = when (item.moderationStatus) {
+        ModerationStatus.PUBLICADO -> Color(0xFF3F8E4E)
+        ModerationStatus.PENDIENTE_VERIFICACION -> Color(0xFFD38A1F)
+        ModerationStatus.FINALIZADO -> Color(0xFF4A4A4A)
+        ModerationStatus.ELIMINADO -> Color(0xFFB00020)
+        ModerationStatus.RECHAZADO -> Color(0xFFB00020)
     }
 
     Card(
@@ -239,4 +246,12 @@ private fun com.market.trameo.domain.model.ObjectCategory.labelRes(): Int = when
     com.market.trameo.domain.model.ObjectCategory.ROPA -> R.string.object_category_ropa
     com.market.trameo.domain.model.ObjectCategory.HOGAR -> R.string.object_category_hogar
     com.market.trameo.domain.model.ObjectCategory.DEPORTES -> R.string.object_category_deportes
+}
+
+private fun ModerationStatus.labelRes(): Int = when (this) {
+    ModerationStatus.PENDIENTE_VERIFICACION -> R.string.common_status_pendiente_verificacion
+    ModerationStatus.PUBLICADO -> R.string.common_status_publicado
+    ModerationStatus.FINALIZADO -> R.string.common_status_finalizado
+    ModerationStatus.ELIMINADO -> R.string.common_status_eliminado
+    ModerationStatus.RECHAZADO -> R.string.common_status_rechazado
 }
