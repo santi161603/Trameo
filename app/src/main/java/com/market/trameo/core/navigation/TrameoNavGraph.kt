@@ -28,6 +28,8 @@ import com.market.trameo.features.resetpassword.ResetPasswordScreen
 import com.market.trameo.features.splash.SplashScreen
 import com.market.trameo.features.splash.SplashViewModel
 import com.market.trameo.features.verifycode.VerifyCodeScreen
+import com.market.trameo.features.detalleusuario.DetalleUsuarioScreen
+import kotlinx.serialization.Serializable
 
 /**
  * Rutas de navegación de la app Trameo.
@@ -50,11 +52,14 @@ object Routes {
     const val VERIFY_CODE = "verify_code"
     const val RESET_PASSWORD = "reset_password"
     const val ADMIN = "admin"
+    const val DETALLE_USUARIO = "detalle_usuario"
 
     fun detalleObjetoRoute(id: String): String = "$DETALLE_OBJETO/$id"
     fun proponerIntercambioRoute(id: Int): String = "$PROPONER_INTERCAMBIO/$id"
     fun chatConversacionRoute(chatId: Int): String = "$CHAT_CONVERSACION/$chatId"
+    fun detalleUsuarioRoute(uid: String): String = "$DETALLE_USUARIO/$uid"
 }
+
 
 /**
  * Grafo de navegación principal.
@@ -177,7 +182,20 @@ fun TrameoNavGraph() {
                     navController.navigate(ProponerIntercambioDestination(objectId, receptorUid)) {
                         launchSingleTop = true
                     }
+                },
+                onOwnerProfileClick = { ownerUid ->
+                    navController.navigate(DetalleUsuarioDestination(ownerUid)) {
+                        launchSingleTop = true
+                    }
                 }
+            )
+        }
+
+        composable<DetalleUsuarioDestination> { backStackEntry ->
+            val args = backStackEntry.toRoute<DetalleUsuarioDestination>()
+            DetalleUsuarioScreen(
+                userId = args.uid,
+                onBackClick = { navController.popBackStack() }
             )
         }
 

@@ -2,6 +2,7 @@ package com.market.trameo.features.detalle
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -78,6 +79,7 @@ data class ObjetoDetalle(
     val categoria: String,
     val estado: String,
     val buscaIntercambio: String,
+    val publicadoPorId: String,
     val publicadoPorNombre: String,
     val publicadoPorFotoUrl: String?
 )
@@ -86,12 +88,14 @@ data class ObjetoDetalle(
 fun DetalleObjetoScreen(
     objeto: ObjetoDetalle,
     onBack: () -> Unit,
+    onOwnerProfileClick: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     DetalleObjetoContent(
         objeto = objeto,
         onBack = onBack,
         onPrimaryAction = {},
+        onOwnerProfileClick = onOwnerProfileClick,
         modifier = modifier
     )
 }
@@ -101,6 +105,7 @@ fun DetalleObjetoScreen(
     objectId: String,
     onBackClick: () -> Unit,
     onProponerIntercambioClick: (String, String) -> Unit,
+    onOwnerProfileClick: (String) -> Unit,
     viewModel: DetalleObjetoViewModel = hiltViewModel()
 ) {
     LaunchedEffect(objectId) {
@@ -138,7 +143,8 @@ fun DetalleObjetoScreen(
     DetalleObjetoContent(
         objeto = detalle,
         onBack = onBackClick,
-        onPrimaryAction = { onProponerIntercambioClick(detalle.id, item!!.ownerId) }
+        onPrimaryAction = { onProponerIntercambioClick(detalle.id, item!!.ownerId) },
+        onOwnerProfileClick = onOwnerProfileClick
     )
 }
 
@@ -147,6 +153,7 @@ private fun DetalleObjetoContent(
     objeto: ObjetoDetalle,
     onBack: () -> Unit,
     onPrimaryAction: () -> Unit,
+    onOwnerProfileClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val imageUrls = remember(objeto.imagenUrl, objeto.imagenesAdicionales) {
@@ -244,7 +251,8 @@ private fun DetalleObjetoContent(
             item {
                 PublisherCard(
                     name = objeto.publicadoPorNombre,
-                    avatarUrl = objeto.publicadoPorFotoUrl
+                    avatarUrl = objeto.publicadoPorFotoUrl,
+                    onClick = { onOwnerProfileClick(objeto.publicadoPorId) }
                 )
             }
 
@@ -393,13 +401,16 @@ private fun SectionCard(
 @Composable
 private fun PublisherCard(
     name: String,
-    avatarUrl: String?
+    avatarUrl: String?,
+    onClick: () -> Unit = {}
 ) {
     Surface(
         shape = RoundedCornerShape(16.dp),
         color = DetalleColors.White,
         tonalElevation = 1.dp,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
     ) {
         Row(
             modifier = Modifier
@@ -456,6 +467,7 @@ private fun com.market.trameo.domain.model.SwapObject.toObjetoDetalle(): ObjetoD
         categoria = category.prettyName(),
         estado = condition.prettyName(),
         buscaIntercambio = exchangePreferences,
+        publicadoPorId = ownerId,
         publicadoPorNombre = ownerName,
         publicadoPorFotoUrl = ownerPhoto
     )
@@ -478,6 +490,7 @@ private fun HomeObject.toObjetoDetalle(owner: UserSummary?): ObjetoDetalle {
         categoria = category,
         estado = condition,
         buscaIntercambio = exchangePreferences,
+        publicadoPorId = ownerId,
         publicadoPorNombre = ownerName,
         publicadoPorFotoUrl = ownerPhoto
     )
@@ -516,6 +529,7 @@ private fun PreviewDetalleObjeto() {
             categoria = "Musica",
             estado = "Bueno",
             buscaIntercambio = "Busco consola retro o audifonos bluetooth.",
+            publicadoPorId = "tester",
             publicadoPorNombre = "Santiago Acero",
             publicadoPorFotoUrl = "https://picsum.photos/seed/trameo-profile-seed/200/200"
         ),

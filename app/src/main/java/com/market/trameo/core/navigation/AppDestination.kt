@@ -21,6 +21,9 @@ data class ChatConversationDestination(val chatId: Int)
 data class DetalleObjetoDestination(val id: String)
 
 @Serializable
+data class DetalleUsuarioDestination(val uid: String)
+
+@Serializable
 data class ProponerIntercambioDestination(val objetoDeseadoUid: String, val receptorUid: String)
 
 @Serializable
