@@ -36,17 +36,19 @@ class HomeViewModel @Inject constructor(
     val items: StateFlow<List<HomeObject>> = combine(
         homeRepository.getPublishedObjects(),
         _searchQuery,
-        _selectedCategory
-    ) { objects, query, selectedCategory ->
+        _selectedCategory,
+        sessionDataStore.userId
+    ) { objects, query, selectedCategory, currentUserId ->
         val normalizedQuery = query.trim().lowercase()
         objects.filter { item ->
+            val isNotMine = item.ownerId != currentUserId
             val matchesCategory = selectedCategory == null || 
                 item.category.equals(selectedCategory.name, ignoreCase = true)
             val matchesQuery = normalizedQuery.isBlank() ||
                 item.name.lowercase().contains(normalizedQuery) ||
                 item.description.lowercase().contains(normalizedQuery)
-            matchesCategory && matchesQuery
-        }
+            isNotMine && matchesCategory && matchesQuery
+        }.distinctBy { it.id }
     }
         .stateIn(
             scope = viewModelScope,

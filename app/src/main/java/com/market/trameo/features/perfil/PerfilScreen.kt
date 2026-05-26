@@ -3,41 +3,16 @@ package com.market.trameo.features.perfil
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Autorenew
-import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -88,30 +63,10 @@ fun PerfilScreen(
         bottomBar = {
             TrameoBottomNavigation(
                 items = listOf(
-                    BottomNavItem(
-                        Routes.HOME,
-                        stringResource(id = R.string.perfil_bottom_home),
-                        Icons.Default.Home,
-                        stringResource(id = R.string.perfil_bottom_home)
-                    ),
-                    BottomNavItem(
-                        Routes.MIS_OBJETOS,
-                        stringResource(id = R.string.perfil_bottom_mis_objetos),
-                        Icons.AutoMirrored.Filled.List,
-                        stringResource(id = R.string.perfil_bottom_mis_objetos)
-                    ),
-                    BottomNavItem(
-                        Routes.TRUEQUES,
-                        stringResource(id = R.string.perfil_bottom_trueques),
-                        Icons.Default.Autorenew,
-                        stringResource(id = R.string.perfil_bottom_trueques)
-                    ),
-                    BottomNavItem(
-                        Routes.PERFIL,
-                        stringResource(id = R.string.perfil_bottom_perfil),
-                        Icons.Default.Person,
-                        stringResource(id = R.string.perfil_bottom_perfil)
-                    )
+                    BottomNavItem(Routes.HOME, stringResource(id = R.string.perfil_bottom_home), Icons.Default.Home, stringResource(id = R.string.perfil_bottom_home)),
+                    BottomNavItem(Routes.MIS_OBJETOS, stringResource(id = R.string.perfil_bottom_mis_objetos), Icons.AutoMirrored.Filled.List, stringResource(id = R.string.perfil_bottom_mis_objetos)),
+                    BottomNavItem(Routes.TRUEQUES, stringResource(id = R.string.perfil_bottom_trueques), Icons.Default.Autorenew, stringResource(id = R.string.perfil_bottom_trueques)),
+                    BottomNavItem(Routes.PERFIL, stringResource(id = R.string.perfil_bottom_perfil), Icons.Default.Person, stringResource(id = R.string.perfil_bottom_perfil))
                 ),
                 currentRoute = Routes.PERFIL,
                 onItemClick = { item ->
@@ -132,61 +87,62 @@ fun PerfilScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .background(Marfil),
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 24.dp),
+            contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             item {
                 ProfileHeader(currentUser = currentUser)
-                Spacer(modifier = Modifier.height(14.dp))
-                StatsRow()
                 Spacer(modifier = Modifier.height(8.dp))
+                StatsRow(user = currentUser)
+                Spacer(modifier = Modifier.height(16.dp))
+                
                 Text(
-                    text = stringResource(id = R.string.perfil_section_cuenta),
+                    text = "Información Personal",
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
                 )
                 Spacer(modifier = Modifier.height(8.dp))
+                
+                UserDetailItem(label = "Correo Electrónico", value = currentUser?.email ?: "...")
+                UserDetailItem(label = "Teléfono", value = currentUser?.phoneNumber ?: "...")
+                UserDetailItem(label = "Ciudad", value = currentUser?.city ?: "...")
+                UserDetailItem(label = "Dirección", value = currentUser?.address ?: "...")
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "Configuración",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                
                 MenuItem(stringResource(id = R.string.perfil_item_editar_perfil))
-                MenuItem(stringResource(id = R.string.perfil_item_metodos_pago))
-                MenuItem(stringResource(id = R.string.perfil_item_seguridad))
                 MenuItem(stringResource(id = R.string.perfil_item_notificaciones))
+                
                 if (isAdmin) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = stringResource(id = R.string.perfil_section_admin),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
                     MenuItem(
-                        text = stringResource(id = R.string.perfil_item_admin_options),
+                        text = "Panel de Administrador",
                         highlighted = true,
                         onClick = onAdminOptionsClick
                     )
                 }
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = stringResource(id = R.string.perfil_section_actividad),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                MenuItem(stringResource(id = R.string.perfil_item_historial))
-                MenuItem(stringResource(id = R.string.perfil_item_chats), onClick = onChatsClick)
-                MenuItem(stringResource(id = R.string.perfil_item_puntos))
-                MenuItem(stringResource(id = R.string.perfil_item_ayuda))
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(16.dp))
+                
                 Button(
                     onClick = { viewModel.logout() },
                     modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text(
-                        text = stringResource(id = R.string.perfil_logout_button),
-                        color = MaterialTheme.colorScheme.onError
-                    )
+                    Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = null)
+                    Spacer(Modifier.width(8.dp))
+                    Text(text = "Cerrar Sesión")
                 }
+                Spacer(modifier = Modifier.height(24.dp))
             }
         }
     }
@@ -195,54 +151,42 @@ fun PerfilScreen(
 @Composable
 private fun ProfileHeader(currentUser: User?) {
     val context = LocalContext.current
-
     Card(
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        modifier = Modifier.fillMaxWidth()
+        elevation = CardDefaults.cardElevation(2.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                AsyncImage(
-                    model = ImageRequest.Builder(context)
-                        .data(currentUser?.profilePhotoUri ?: "https://picsum.photos/seed/trameo-perfil/300/300")
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = stringResource(id = R.string.perfil_avatar_content_description),
-                    placeholder = painterResource(id = R.drawable.ic_launcher_background),
-                    error = painterResource(id = R.drawable.ic_launcher_foreground),
-                    modifier = Modifier
-                        .size(74.dp)
-                        .clip(CircleShape)
-                        .border(2.dp, Color.White, CircleShape),
-                    contentScale = ContentScale.Crop
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Column {
-                    Text(
-                        text = currentUser?.name ?: stringResource(id = R.string.perfil_fallback_name),
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = currentUser?.city?.let { "$it, Colombia" }
-                            ?: stringResource(id = R.string.perfil_fallback_city),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(12.dp))
-            Surface(
-                shape = RoundedCornerShape(12.dp),
-                color = Terracota.copy(alpha = 0.1f)
-            ) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(context)
+                    .data(currentUser?.profilePhotoUri ?: "https://picsum.photos/seed/trameo/300/300")
+                    .crossfade(true)
+                    .build(),
+                contentDescription = null,
+                placeholder = painterResource(id = R.drawable.ic_launcher_background),
+                error = painterResource(id = R.drawable.ic_launcher_foreground),
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(CircleShape)
+                    .border(2.dp, Terracota, CircleShape),
+                contentScale = ContentScale.Crop
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Column {
                 Text(
-                    text = stringResource(id = R.string.perfil_level_text),
-                    color = Terracota,
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp)
+                    text = currentUser?.name ?: "Usuario",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = currentUser?.role?.name ?: "CLIENTE",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Terracota
                 )
             }
         }
@@ -250,23 +194,28 @@ private fun ProfileHeader(currentUser: User?) {
 }
 
 @Composable
-private fun StatsRow() {
+private fun UserDetailItem(label: String, value: String) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(1.dp)
+    ) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            Text(text = label, style = MaterialTheme.typography.labelSmall, color = Color.Gray)
+            Text(text = value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+        }
+    }
+}
+
+@Composable
+private fun StatsRow(user: User?) {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        StatCard(
-            title = stringResource(id = R.string.perfil_stat_swaps_value),
-            subtitle = stringResource(id = R.string.perfil_stat_swaps_label),
-            modifier = Modifier.weight(1f)
-        )
-        StatCard(
-            title = stringResource(id = R.string.perfil_stat_active_value),
-            subtitle = stringResource(id = R.string.perfil_stat_active_label),
-            modifier = Modifier.weight(1f)
-        )
-        StatCard(
-            title = stringResource(id = R.string.perfil_stat_reputation_value),
-            subtitle = stringResource(id = R.string.perfil_stat_reputation_label),
-            modifier = Modifier.weight(1f)
-        )
+        StatCard(title = "12", subtitle = "Trueques", modifier = Modifier.weight(1f))
+        StatCard(title = "5", subtitle = "Activos", modifier = Modifier.weight(1f))
+        StatCard(title = user?.score?.toString() ?: "0", subtitle = "Puntos", modifier = Modifier.weight(1f))
     }
 }
 
@@ -275,89 +224,44 @@ private fun StatCard(title: String, subtitle: String, modifier: Modifier = Modif
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(1.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 12.dp),
+            modifier = Modifier.padding(12.dp).fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            Text(text = title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            Text(text = subtitle, style = MaterialTheme.typography.labelSmall, color = Color.Gray)
         }
     }
 }
 
 @Composable
-private fun MenuItem(text: String, onClick: (() -> Unit)? = null) {
-    Surface(
-        shape = RoundedCornerShape(14.dp),
-        color = Color.White,
-        tonalElevation = 1.dp,
-        border = null,
+private fun MenuItem(text: String, highlighted: Boolean = false, onClick: (() -> Unit)? = null) {
+    Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp)
-            .let { base -> if (onClick != null) base.clickable(onClick = onClick) else base }
+            .clickable(enabled = onClick != null) { onClick?.invoke() },
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (highlighted) Terracota.copy(alpha = 0.1f) else Color.White
+        ),
+        elevation = CardDefaults.cardElevation(1.dp)
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 14.dp, vertical = 14.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = text, style = MaterialTheme.typography.bodyMedium)
-            Icon(Icons.Default.ChevronRight, contentDescription = null)
-        }
-    }
-}
-
-@Composable
-private fun MenuItem(
-    text: String,
-    highlighted: Boolean,
-    onClick: (() -> Unit)? = null
-) {
-    Surface(
-        shape = RoundedCornerShape(14.dp),
-        color = if (highlighted) Terracota.copy(alpha = 0.12f) else Color.White,
-        tonalElevation = if (highlighted) 2.dp else 1.dp,
-        border = if (highlighted) BorderStroke(1.dp, Terracota.copy(alpha = 0.65f)) else null,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 8.dp)
-            .let { base -> if (onClick != null) base.clickable(onClick = onClick) else base }
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 14.dp, vertical = 14.dp),
+            modifier = Modifier.padding(16.dp).fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = text,
                 style = MaterialTheme.typography.bodyMedium,
-                color = if (highlighted) Terracota else MaterialTheme.colorScheme.onSurface,
-                fontWeight = if (highlighted) FontWeight.SemiBold else FontWeight.Normal
+                fontWeight = if (highlighted) FontWeight.Bold else FontWeight.Normal,
+                color = if (highlighted) Terracota else Color.Black
             )
-            Icon(
-                Icons.Default.ChevronRight,
-                contentDescription = null,
-                tint = if (highlighted) Terracota else MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            Icon(Icons.Default.ChevronRight, contentDescription = null, tint = if (highlighted) Terracota else Color.Gray)
         }
     }
 }
-
-

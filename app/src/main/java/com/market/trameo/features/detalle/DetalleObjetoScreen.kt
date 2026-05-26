@@ -55,6 +55,7 @@ import com.market.trameo.R
 import com.market.trameo.domain.model.HomeObject
 import com.market.trameo.domain.model.ObjectCategory
 import com.market.trameo.domain.model.ObjectCondition
+import com.market.trameo.domain.model.UserSummary
 
 private object DetalleColors {
     val Background = Color(0xFFF6F4EE)
@@ -99,13 +100,14 @@ fun DetalleObjetoScreen(
 fun DetalleObjetoScreen(
     objectId: String,
     onBackClick: () -> Unit,
-    onProponerIntercambioClick: (String) -> Unit,
+    onProponerIntercambioClick: (String, String) -> Unit,
     viewModel: DetalleObjetoViewModel = hiltViewModel()
 ) {
     LaunchedEffect(objectId) {
         viewModel.load(objectId)
     }
     val item by viewModel.item.collectAsState()
+    val owner by viewModel.owner.collectAsState()
 
     if (item == null) {
         Scaffold(
@@ -132,11 +134,11 @@ fun DetalleObjetoScreen(
         return
     }
 
-    val detalle = item!!.toObjetoDetalle()
+    val detalle = item!!.toObjetoDetalle(owner)
     DetalleObjetoContent(
         objeto = detalle,
         onBack = onBackClick,
-        onPrimaryAction = { onProponerIntercambioClick(detalle.id) }
+        onPrimaryAction = { onProponerIntercambioClick(detalle.id, item!!.ownerId) }
     )
 }
 
@@ -459,15 +461,11 @@ private fun com.market.trameo.domain.model.SwapObject.toObjetoDetalle(): ObjetoD
     )
 }
 
-private fun HomeObject.toObjetoDetalle(): ObjetoDetalle {
+private fun HomeObject.toObjetoDetalle(owner: UserSummary?): ObjetoDetalle {
     val firstImage = photos.firstOrNull()
     val extraImages = photos.drop(1)
-    val ownerName = if (ownerId == "seed-user-1") "Santiago Acero" else "Usuario Trameo"
-    val ownerPhoto = if (ownerId == "seed-user-1") {
-        "https://picsum.photos/seed/trameo-profile-seed/200/200"
-    } else {
-        ""
-    }
+    val ownerName = owner?.name?.takeIf { it.isNotBlank() } ?: "Usuario Trameo"
+    val ownerPhoto = owner?.profilePhotoUri?.takeIf { it.isNotBlank() }
 
     return ObjetoDetalle(
         id = id,

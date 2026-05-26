@@ -173,6 +173,7 @@ private fun MiObjetoCard(item: SwapObject, onClick: () -> Unit) {
     val statusLabel = when (item.moderationStatus) {
         ModerationStatus.PUBLICADO -> stringResource(id = R.string.common_status_publicado)
         ModerationStatus.PENDIENTE_VERIFICACION -> stringResource(id = R.string.common_status_pendiente_verificacion)
+        ModerationStatus.EN_PROCESO_DE_INTERCAMBIO -> stringResource(id = R.string.common_status_en_intercambio)
         ModerationStatus.FINALIZADO -> stringResource(id = R.string.common_status_finalizado)
         ModerationStatus.ELIMINADO -> stringResource(id = R.string.common_status_eliminado)
         ModerationStatus.RECHAZADO -> stringResource(id = R.string.common_status_rechazado)
@@ -181,6 +182,7 @@ private fun MiObjetoCard(item: SwapObject, onClick: () -> Unit) {
     val statusColor = when (item.moderationStatus) {
         ModerationStatus.PUBLICADO -> Color(0xFF3F8E4E)
         ModerationStatus.PENDIENTE_VERIFICACION -> Color(0xFFD38A1F)
+        ModerationStatus.EN_PROCESO_DE_INTERCAMBIO -> Color(0xFF2196F3)
         ModerationStatus.FINALIZADO -> Color(0xFF4A4A4A)
         ModerationStatus.ELIMINADO -> Color(0xFFB00020)
         ModerationStatus.RECHAZADO -> Color(0xFFB00020)
@@ -251,6 +253,7 @@ private fun com.market.trameo.domain.model.ObjectCategory.labelRes(): Int = when
 private fun ModerationStatus.labelRes(): Int = when (this) {
     ModerationStatus.PENDIENTE_VERIFICACION -> R.string.common_status_pendiente_verificacion
     ModerationStatus.PUBLICADO -> R.string.common_status_publicado
+    ModerationStatus.EN_PROCESO_DE_INTERCAMBIO -> R.string.common_status_en_intercambio
     ModerationStatus.FINALIZADO -> R.string.common_status_finalizado
     ModerationStatus.ELIMINADO -> R.string.common_status_eliminado
     ModerationStatus.RECHAZADO -> R.string.common_status_rechazado

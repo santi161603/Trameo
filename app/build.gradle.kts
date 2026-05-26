@@ -86,6 +86,7 @@ dependencies {
 
     // Google Maps
     implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
 
     // Cloudinary
     implementation(libs.cloudinary.android)

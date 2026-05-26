@@ -16,11 +16,12 @@ import com.market.trameo.features.detalle.DetalleObjetoScreen
 import com.market.trameo.features.forgotpassword.ForgotPassWordScreem
 import com.market.trameo.features.home.HomeScreen
 import com.market.trameo.features.intercambios.MisIntercambiosScreen
+import com.market.trameo.features.intercambios.detalle.IntercambioDetalleScreen
 import com.market.trameo.features.login.LoginScreen
 import com.market.trameo.features.mapa.MapaTruequesMockScreen
 import com.market.trameo.features.misobjetos.MisObjetosScreen
 import com.market.trameo.features.perfil.PerfilScreen
-import com.market.trameo.features.proponerintercambio.ProponerIntercambioScreen
+import com.market.trameo.features.proponerintercambio.PropuestaScreen
 import com.market.trameo.features.publicar.PublicarScreen
 import com.market.trameo.features.register.RegisterScreen
 import com.market.trameo.features.resetpassword.ResetPasswordScreen
@@ -172,8 +173,8 @@ fun TrameoNavGraph() {
             DetalleObjetoScreen(
                 objectId = args.id,
                 onBackClick = { navController.popBackStack() },
-                onProponerIntercambioClick = { objectId ->
-                    navController.navigate(ProponerIntercambioDestination(objectId.hashCode())) {
+                onProponerIntercambioClick = { objectId, receptorUid ->
+                    navController.navigate(ProponerIntercambioDestination(objectId, receptorUid)) {
                         launchSingleTop = true
                     }
                 }
@@ -182,8 +183,9 @@ fun TrameoNavGraph() {
 
         composable<ProponerIntercambioDestination> { backStackEntry ->
             val args = backStackEntry.toRoute<ProponerIntercambioDestination>()
-            ProponerIntercambioScreen(
-                objectId = args.id,
+            PropuestaScreen(
+                objetoDeseadoUid = args.objetoDeseadoUid,
+                receptorUid = args.receptorUid,
                 onBackClick = { navController.popBackStack() }
             )
         }
@@ -209,7 +211,20 @@ fun TrameoNavGraph() {
                     navController.navigate(PublicarDestination) {
                         launchSingleTop = true
                     }
+                },
+                onIntercambioClick = { id ->
+                    navController.navigate(DetalleIntercambioDestination(id)) {
+                        launchSingleTop = true
+                    }
                 }
+            )
+        }
+
+        composable<DetalleIntercambioDestination> { backStackEntry ->
+            val args = backStackEntry.toRoute<DetalleIntercambioDestination>()
+            IntercambioDetalleScreen(
+                intercambioId = args.intercambioId,
+                onBackClick = { navController.popBackStack() }
             )
         }
 

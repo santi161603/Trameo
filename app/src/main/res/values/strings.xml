@@ -90,6 +90,7 @@
     <string name="common_status_finalizado">Finalizado</string>
     <string name="common_status_eliminado">Eliminado</string>
     <string name="common_status_rechazado">Rechazado</string>
+    <string name="common_status_en_intercambio">En intercambio</string>
     <string name="common_status_pendiente">Pendiente</string>
     <string name="common_status_pendiente_verificacion">En espera de aprobación</string>
 

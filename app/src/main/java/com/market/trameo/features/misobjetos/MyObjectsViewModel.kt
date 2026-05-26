@@ -64,7 +64,7 @@ class MyObjectsViewModel @Inject constructor(
                 item.exchangePreferences.lowercase().contains(normalizedQuery)
             val matchesStatus = statuses.isEmpty() || statuses.contains(item.moderationStatus)
             matchesQuery && matchesStatus
-        }
+        }.distinctBy { it.id }
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),

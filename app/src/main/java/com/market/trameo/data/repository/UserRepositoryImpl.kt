@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.market.trameo.domain.model.User
 import com.market.trameo.domain.model.UserRole
+import com.market.trameo.domain.model.UserSummary
 import com.market.trameo.domain.repository.UserRepository
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -157,6 +158,17 @@ class UserRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             throw e
         }
+    }
+
+    override suspend fun getUserSummary(userId: String): UserSummary? = withContext(Dispatchers.IO) {
+        runCatching {
+            val snapshot = firestore.collection(USERS_COLLECTION).document(userId).get().await()
+            if (!snapshot.exists()) return@runCatching null
+            val id = snapshot.getString("id") ?: userId
+            val name = snapshot.getString("name") ?: ""
+            val profilePhotoUri = snapshot.getString("profilePhotoUri")
+            UserSummary(id = id, name = name, profilePhotoUri = profilePhotoUri)
+        }.getOrNull()
     }
 
     private fun User.toFirestoreMap(): Map<String, Any?> {

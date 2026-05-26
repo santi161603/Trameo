@@ -1,5 +1,7 @@
 package com.market.trameo.features.register
 
+import android.Manifest
+import android.annotation.SuppressLint
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.border
@@ -44,6 +46,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -52,17 +55,20 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
+import com.google.android.gms.location.LocationServices
 import com.market.trameo.R
 import com.market.trameo.core.utils.RequestResult
 import com.market.trameo.core.theme.Marfil
 import com.market.trameo.core.theme.Terracota
 
+@SuppressLint("MissingPermission")
 @Composable
 fun RegisterScreen(
     onNavigateToLogin: () -> Unit,
     onBackClick: () -> Unit = {},
     viewModel: RegisterViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val registerResult by viewModel.registerResult.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val profilePhotoUri by viewModel.profilePhotoUri.collectAsState()
@@ -70,23 +76,51 @@ fun RegisterScreen(
     val scrollState = rememberScrollState()
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
+
+    val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
+
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+            permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+        ) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                location?.let {
+                    viewModel.updateLocation(it.latitude, it.longitude)
+                }
+            }
+        }
+    }
+
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
         viewModel.onProfilePhotoSelected(uri)
     }
+
+    LaunchedEffect(Unit) {
+        locationPermissionLauncher.launch(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        )
+    }
+
     LaunchedEffect(registerResult) {
         registerResult?.let { result ->
-            val message = when (result) {
-                is RequestResult.Success -> result.message
-                is RequestResult.Failure -> result.errorMessage
+            when (result) {
+                is RequestResult.Success -> {
+                    onNavigateToLogin()
+                    viewModel.resetForm()
+                    viewModel.resetRegisterResult()
+                }
+                is RequestResult.Failure -> {
+                    snackbarHostState.showSnackbar(result.errorMessage)
+                    viewModel.resetRegisterResult()
+                }
             }
-            snackbarHostState.showSnackbar(message)
-            if (result is RequestResult.Success) {
-                onNavigateToLogin()
-                viewModel.resetForm()
-            }
-            viewModel.resetRegisterResult()
         }
     }
 

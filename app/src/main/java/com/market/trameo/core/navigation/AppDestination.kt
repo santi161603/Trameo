@@ -21,10 +21,13 @@ data class ChatConversationDestination(val chatId: Int)
 data class DetalleObjetoDestination(val id: String)
 
 @Serializable
-data class ProponerIntercambioDestination(val id: Int)
+data class ProponerIntercambioDestination(val objetoDeseadoUid: String, val receptorUid: String)
 
 @Serializable
 object TruequesDestination
+
+@Serializable
+data class DetalleIntercambioDestination(val intercambioId: String)
 
 @Serializable
 object PerfilDestination
@@ -52,4 +55,3 @@ object VerifyCodeDestination
 
 @Serializable
 object ResetPasswordDestination
-

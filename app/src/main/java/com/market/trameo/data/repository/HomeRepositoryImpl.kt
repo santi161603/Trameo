@@ -61,11 +61,39 @@ class HomeRepositoryImpl @Inject constructor(
         awaitClose { subscription.remove() }
     }
 
+    override fun getPendingObjects(): Flow<List<HomeObject>> = callbackFlow {
+        val subscription = firestore.collection(OBJETOS_COLLECTION)
+            .whereEqualTo("moderationStatus", ModerationStatus.PENDIENTE_VERIFICACION.name)
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+                val objects = snapshot?.documents?.mapNotNull(::documentToHomeObject) ?: emptyList()
+                trySend(objects)
+            }
+        awaitClose { subscription.remove() }
+    }
+
     override suspend fun getObjectById(objectId: String): HomeObject? = withContext(Dispatchers.IO) {
         runCatching {
             val snapshot = firestore.collection(OBJETOS_COLLECTION).document(objectId).get().await()
             snapshot.takeIf { it.exists() }?.let(::documentToHomeObject)
         }.getOrNull()
+    }
+
+    override suspend fun updateObjectStatus(
+        objectId: String,
+        status: ModerationStatus
+    ): Result<Unit> = withContext(Dispatchers.IO) {
+        runCatching {
+            firestore.collection(OBJETOS_COLLECTION)
+                .document(objectId)
+                .update("moderationStatus", status.name)
+                .await()
+            Unit
+        }
     }
 
     private fun documentToHomeObject(doc: DocumentSnapshot): HomeObject? {

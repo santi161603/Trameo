@@ -63,16 +63,17 @@ fun LoginScreen(
 
     LaunchedEffect(loginResult) {
         loginResult?.let { result ->
-            val message = when (result) {
-                is RequestResult.Success -> result.message
-                is RequestResult.Failure -> result.errorMessage
+            when (result) {
+                is RequestResult.Success -> {
+                    onLoginSuccess()
+                    viewModel.resetForm()
+                    viewModel.resetLoginResult()
+                }
+                is RequestResult.Failure -> {
+                    snackbarHostState.showSnackbar(result.errorMessage)
+                    viewModel.resetLoginResult()
+                }
             }
-            snackbarHostState.showSnackbar(message)
-            if (result is RequestResult.Success) {
-                onLoginSuccess()
-                viewModel.resetForm()
-            }
-            viewModel.resetLoginResult()
         }
     }
 

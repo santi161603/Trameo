@@ -2,6 +2,7 @@ package com.market.trameo.domain.repository
 
 import android.net.Uri
 import com.market.trameo.domain.model.User
+import com.market.trameo.domain.model.UserSummary
 import kotlinx.coroutines.flow.StateFlow
 
 interface UserRepository {
@@ -11,4 +12,5 @@ interface UserRepository {
     suspend fun findById(userId: String): User?
     suspend fun sendPasswordResetEmail(email: String)
     suspend fun uploadProfilePhoto(uri: Uri): String
+    suspend fun getUserSummary(userId: String): UserSummary?
 }

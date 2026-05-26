@@ -83,6 +83,9 @@ class RegisterViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
+    private var latitude: Double = 0.0
+    private var longitude: Double = 0.0
+
     val isFormValid: Boolean
         get() = name.isValid &&
             city.isValid &&
@@ -118,6 +121,8 @@ class RegisterViewModel @Inject constructor(
                         address = address.value.trim(),
                         phoneNumber = phoneNumber.value.trim(),
                         profilePhotoUri = _profilePhotoUri.value,
+                        latitude = latitude,
+                        longitude = longitude,
                         role = UserRole.CLIENTE
                     )
                 )
@@ -148,5 +153,10 @@ class RegisterViewModel @Inject constructor(
 
     fun onProfilePhotoSelected(uri: Uri?) {
         _profilePhotoUri.value = uri?.toString()
+    }
+
+    fun updateLocation(lat: Double, lng: Double) {
+        latitude = lat
+        longitude = lng
     }
 }
